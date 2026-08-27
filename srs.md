@@ -326,7 +326,7 @@ Draft workflow skeleton specified in packaging doc §CI; tags `v0.x.y`; prerelea
 
 | Owner directive | Coverage |
 |---|---|
-| "use aisuite as reference" | FR-C1..C3 (unified routing), §1.3[1] |
+| "use unified multi-provider routing" | FR-C1..C3 (unified routing) |
 | "windows installer / mac installer / linux shell / android" | §6, FR-D1, packaging doc, M5/M6 |
 | "minimum resources" | NFR-1..7, FR-S5 |
 | "my ingredients (you-ai-project.netlify.app)" | §2.1 engine reuse, FR-C4..C8, U1; ingredient table below |

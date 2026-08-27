@@ -1,9 +1,9 @@
 /**
- * aisuite-style unified provider:model routing (FR-C1, FR-C3).
+ * Unified provider:model routing (FR-C1, FR-C3).
  *
- * Mirrors aisuite's conventions:
+ * Conventions:
  *   - model ids look like `provider:model`  e.g. `openrouter:meta-llama/llama-3.1-8b-instruct:free`
- *   - client access is aisuite-shaped:      ai.openai.chat.completions.create({ messages })
+ *   - client access is namespace-shaped:      ai.openai.chat.completions.create({ messages })
  *   - streaming on OpenAI-compatible providers yields token chunks
  *
  * All calls are delegated to the engine's public providers layer
@@ -66,11 +66,11 @@ async function resolveProvider(name: string): Promise<import('./engine.js').Engi
 }
 
 /**
- * AisuiteClient — Proxy-based so `client.<provider>.chat.completions.create(...)`
- * works exactly like aisuite's Python `ai[provider].chat.completions.create(...)`.
+ * ProviderClient — Proxy-based so `client.<provider>.chat.completions.create(...)`
+ * provides a unified chat namespace across all configured providers.
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type AiSuiteClient = Record<string, { chat: { completions: { create(p: ChatCompletionParams & { stream?: boolean }): Promise<ChatCompletion> } } }>;
+export type ProviderClient = Record<string, { chat: { completions: { create(p: ChatCompletionParams & { stream?: boolean }): Promise<ChatCompletion> } } }>;
 
 export class Router {
   /** Known providers from the engine registry + common aliases. */
@@ -104,10 +104,10 @@ export class Router {
   }
 
   /**
-   * aisuite-shaped namespace object: `await ai.get('openrouter')` then
+   * Provider namespace object: `await ai.get('openrouter')` then
    * `.chat.completions.create({messages})`.
    */
-  async get(providerName: string): Promise<AiSuiteClient[string] & { chat: unknown }> {
+  async get(providerName: string): Promise<ProviderClient[string] & { chat: unknown }> {
     const engine = await loadEngine();
     // Touch the provider once so misconfiguration surfaces immediately.
     await resolveProvider(providerName);
