@@ -1,18 +1,56 @@
-# S-AI v6.0 — Synthetic Executive
+# S-AI — Artificial Mind · Integrated OpenWorker
 
 [![npm version](https://img.shields.io/npm/v/@saikarun/s-ai?color=6366f1&label=version)](https://www.npmjs.com/package/@saikarun/s-ai)
 [![npm downloads](https://img.shields.io/npm/dm/@saikarun/s-ai?color=22c55e)](https://www.npmjs.com/package/@saikarun/s-ai)
 [![License: MIT](https://img.shields.io/badge/license-MIT-ec4899)](LICENSE)
 [![Node](https://img.shields.io/badge/node-%3E%3D18-2c3e50)](package.json)
-[![Build](https://img.shields.io/badge/build-passing-22c55e)](build/)
+[![Security Audit](https://github.com/karun99/s-ai-update/actions/workflows/security.yml/badge.svg)](https://github.com/karun99/s-ai-update/actions/workflows/security.yml)
+[![Build](https://github.com/karun99/s-ai-update/actions/workflows/build.yml/badge.svg)](https://github.com/karun99/s-ai-update/actions/workflows/build.yml)
 
 > **Published:** [`@saikarun/s-ai`](https://www.npmjs.com/package/@saikarun/s-ai) | **License:** MIT | **Platform:** Node.js >= 18 | **Module:** ESM (TypeScript)
 
-A CLI-first multi-agent swarm system with **execution layer** (policy-gated tool execution with approval), **neural mapping (Digital Twin persona adaptation)**, **MCP Builder** (resource-efficient template-based MCP server creation), **Skill Creator** (customizable modular skill composition), **Research Mapper (Paperscape-style arXiv visualization)**, **Study Buddy (AI tutoring with gamified learning)**, **Bhashini multilingual AI**, crawl4ai web scraping, MCP integration, knowledge graph, and bias-reduced consensus.
+> **S-AI** is an **Artificial Mind** — a self-hosted, intelligence-first coworker that reasons across a multi-agent swarm, thinks *and* acts through a policy-gated execution layer, and ships as an **Integrated OpenWorker** harness with desktop installers, scheduled jobs, reach channels, a credentials vault, and simulated-organoid intelligence (SOI).
+
+The system fuses **execution layer** (risk-rated tool execution with approval gates), **neural mapping (Digital Twin persona adaptation)**, **SOI (Simulated Organoid Intelligence)** for memory consolidation, **MCP Builder** (resource-efficient template-based MCP server creation), **Skill Creator** (customizable modular skill composition), **Research Mapper (Paperscape-style arXiv visualization)**, **Study Buddy (AI tutoring with gamified learning)**, **Bhashini multilingual AI**, crawl4ai web scraping, MCP integration, knowledge graph, and bias-reduced consensus.
+
+**v6.1 Security:** Hardened for production — SSRF protection, filesystem & shell sandboxing, bearer-token auth, rate limiting, and a secure registry-bound execution engine, all covered by CI (gitleaks, OSV-Scanner, govulncheck, Semgrep, npm audit) and automated dependency updates via Dependabot.
 
 **v6.0 New:** The swarm now thinks *and* acts — it produces execution plans with risk-rated actions that go through approval gates before execution. S-AI evolves from a reasoning engine into a full-fledged autonomous assistant.
 
 **No advanced hardware required** — runs on any device with a browser or Node.js. Zero inference cost with OpenRouter free models. Your data stays on your device.
+
+---
+
+## The Artificial Mind & Integrated OpenWorker
+
+S-AI is built as an **Artificial Mind** — a cohesive intelligence that combines many cognitive faculties rather than a single chat wrapper. It ships as an **Integrated OpenWorker**: a self-hosted "AI coworker" that installs natively and works for you on your own hardware.
+
+| Capability | OpenWorker delivers |
+|-----------|---------------------|
+| **Swarm Reasoning** | 6–7 agent swarm with bias-reduced consensus reaches balanced, multi-perspective conclusions |
+| **Synthetic Executive** | Plans then *acts* — risk-rated actions pass through approval gates before executing real tools |
+| **Simulated Organoid Intelligence (SOI)** | Bio-inspired, simulated neural memory & consensus modulation (software-only, no hardware) |
+| **Desktop Coworker** | Native installers for Windows (EXE/MSI), macOS (DMG), Linux, Android, and PWA |
+| **Scheduled Jobs & Automations** | `openworker` daemon runs recurring worker jobs and cron-style automations |
+| **Reach Channels** | Web, YouTube, GitHub, RSS, arXiv — with doctor health checks per channel |
+| **Credentials Vault** | Secrets stored encrypted and injected only where needed |
+| **Memory Graph** | Persistent knowledge graph + neural persona (Digital Twin) adaptation |
+| **Local-First** | Keys and data never leave your device except to the AI providers you choose |
+
+### OpenWorker CLI
+
+```bash
+openworker chat        # Start a worker session with the swarm
+openworker run "job"   # Run a one-off worker job
+openworker jobs        # Manage scheduled automated jobs
+openworker policy show # Inspect tool-use policy (allow / deny / require-approval)
+openworker vault       # Manage encrypted credentials
+openworker reach       # Configure and health-check reach channels
+openworker soi         # Inspect the simulated organoid intelligence state
+openworker daemon      # Run the resident worker service
+```
+
+The full OpenWorker harness lives in [`suite/`](suite/) and integrates directly with the S-AI engine core.
 
 ---
 
@@ -212,10 +250,14 @@ services:
     restart: unless-stopped
 ```
 
-## What's in v6.0
+## What's in v6.1
 
 | Feature | Status |
 |---------|--------|
+| **Integrated OpenWorker harness** (daemon, jobs, reach, vault, policy) | **New in 6.1** |
+| **Security hardening** (SSRF, sandboxing, auth, rate limit, secure executor) | **New in 6.1** |
+| **Security CI** (gitleaks, OSV-Scanner, govulncheck, Semgrep, npm audit) | **New in 6.1** |
+| **Dependabot** across all sub-projects & ecosystems | **New in 6.1** |
 | 6-agent swarm with bias-reduced consensus | Done |
 | **Execution Layer** (policy-gated tool execution) | **New in 6.0** |
 | **7-agent swarm** (added Action Planner) | **New in 6.0** |
