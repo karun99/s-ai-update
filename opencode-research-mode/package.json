@@ -1,0 +1,33 @@
+{
+  "name": "@opencode-ai/research-mode",
+  "version": "1.0.0",
+  "description": "Deep research plugin for opencode — web fetching, agent-based research loops, and paper analysis",
+  "type": "module",
+  "main": "./src/index.js",
+  "types": "./src/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./src/index.js",
+      "types": "./src/index.d.ts"
+    }
+  },
+  "files": [
+    "src"
+  ],
+  "keywords": [
+    "opencode",
+    "opencode-plugin",
+    "research",
+    "web-fetch",
+    "paper-analysis"
+  ],
+  "peerDependencies": {
+    "@opencode-ai/plugin": ">=1.17.0"
+  },
+  "devDependencies": {
+    "@opencode-ai/plugin": "1.17.15",
+    "zod": "4.1.8",
+    "typescript": "5.8.2"
+  },
+  "license": "MIT"
+}

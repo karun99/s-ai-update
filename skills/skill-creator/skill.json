@@ -1,0 +1,23 @@
+{
+  "name": "skill-creator",
+  "version": "1.0.0",
+  "description": "Customizable skill creator with modular composition, hot-reload, and lightweight runtime for edge and cloud deployment",
+  "author": "nsk",
+  "main": "index.js",
+  "icon": "🛠",
+  "category": "builder",
+  "tools": [
+    { "name": "skill_list_templates", "description": "List available skill templates" },
+    { "name": "skill_create", "description": "Create a new skill from a template with full customization" },
+    { "name": "skill_create_prompt", "description": "Create a skill from natural language description" },
+    { "name": "skill_list_installed", "description": "List all installed skills" },
+    { "name": "skill_memory_estimate", "description": "Estimate memory usage for a skill template" },
+    { "name": "skill_categories", "description": "List all skill categories" }
+  ],
+  "prompts": [
+    { "name": "skill_architect", "description": "Design a custom skill for a use case" }
+  ],
+  "resources": [
+    { "uri": "s-ai://skill-creator/templates", "name": "Skill Templates", "description": "Built-in skill templates" }
+  ]
+}

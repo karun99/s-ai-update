@@ -1,0 +1,29 @@
+{
+  "appId": "com.sai.swarm",
+  "appName": "S-AI Swarm",
+  "webDir": "app/src/main/assets/www",
+  "server": {
+    "androidScheme": "https",
+    "allowNavigation": ["localhost", "127.0.0.1"]
+  },
+  "android": {
+    "buildOptions": {
+      "keystorePath": null,
+      "keystoreAlias": null
+    },
+    "allowMixedContent": true
+  },
+  "plugins": {
+    "SplashScreen": {
+      "launchAutoHide": true,
+      "launchShowDuration": 2000,
+      "backgroundColor": "#0e0e1a",
+      "showSpinner": true,
+      "spinnerColor": "#7c6df0"
+    },
+    "StatusBar": {
+      "style": "DARK",
+      "backgroundColor": "#0e0e1a"
+    }
+  }
+}

@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
+    <title>Study Buddy · S-AI</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📚</text></svg>" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/gitbrent/PptxGenJS@3.12.0/dist/pptxgen.bundle.js"></script>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        :root{
+            --bg:#f8fafc;--card:#ffffff;--border:#f1f5f9;--text:#0f172a;--muted:#64748b;--dim:#94a3b8;
+            --accent:#c7794a;--accent-light:#e8a87a;--accent-glow:rgba(199,121,74,0.12);
+            --green:#16a34a;--red:#dc2626;--yellow:#d97706;--blue:#2563eb;
+            --radius:20px;--radius-sm:12px;
+        }
+        html,body{height:100%;overflow:hidden}
+        body{font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;background:var(--bg);display:flex;justify-content:center;align-items:center;padding:10px}
+
+        .app{max-width:1100px;width:100%;height:100%;max-height:920px;background:var(--card);border-radius:var(--radius);box-shadow:0 20px 60px rgba(0,0,0,0.06);display:flex;flex-direction:column;overflow:hidden;position:relative}
+
+        /* HEADER */
+        .hdr{padding:10px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;flex-wrap:wrap;gap:6px;min-height:50px}
+        .hdr .logo{display:flex;align-items:center;gap:8px}
+        .hdr .logo h1{font-size:0.95rem;font-weight:700;color:var(--text)}
+        .hdr .logo h1 span{background:linear-gradient(135deg,var(--accent),var(--accent-light));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+        .hdr .badge{background:var(--border);color:var(--muted);padding:2px 8px;border-radius:40px;font-size:0.5rem;font-weight:600;white-space:nowrap}
+        .hdr .badge.session{background:#dbeafe;color:var(--blue)}
+        .hdr .badge.cooldown{background:#fee2e2;color:var(--red)}
+        .hdr .badge.daily{background:#fef3c7;color:var(--yellow)}
+        .hdr .actions{display:flex;align-items:center;gap:4px;flex-wrap:wrap}
+        .hdr .actions button{background:transparent;border:none;padding:4px 8px;border-radius:40px;color:var(--muted);cursor:pointer;transition:all 0.2s;font-size:0.5rem;font-weight:500;font-family:inherit;display:flex;align-items:center;gap:3px;white-space:nowrap}
+        .hdr .actions button:hover{background:var(--border);color:var(--text)}
+        .hdr .actions button.primary{background:var(--accent);color:#fff;padding:4px 12px;border-radius:40px;border:none;font-size:0.5rem;font-weight:600;cursor:pointer;transition:all 0.2s;font-family:inherit}
+        .hdr .actions button.primary:hover{background:var(--accent);opacity:0.9}
+        .hdr .actions button.primary:disabled{opacity:0.4;cursor:not-allowed}
+
+        /* MODE TABS */
+        .mode-tabs{display:flex;gap:4px;padding:6px 16px;border-bottom:1px solid var(--border);flex-shrink:0}
+        .mode-tab{background:transparent;border:1px solid var(--border);border-radius:40px;padding:4px 12px;font-size:0.5rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all 0.2s;font-family:inherit;display:flex;align-items:center;gap:4px}
+        .mode-tab:hover{border-color:var(--accent);color:var(--text)}
+        .mode-tab.active{background:var(--accent);border-color:var(--accent);color:#fff}
+
+        /* MAIN */
+        .main{display:flex;flex:1;overflow:hidden;min-height:0}
+
+        /* SIDEBAR */
+        .side{width:220px;background:var(--bg);border-right:1px solid var(--border);padding:10px 12px;display:flex;flex-direction:column;gap:8px;overflow-y:auto;flex-shrink:0}
+        .side .avatar-box{text-align:center;padding:6px 0}
+        .side .avatar{width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#fcd34d,#f59e0b);display:flex;align-items:center;justify-content:center;font-size:1.8rem;margin:0 auto;border:3px solid #fff;box-shadow:0 4px 16px rgba(0,0,0,0.06);transition:all 0.5s}
+        .side .avatar .dot{position:absolute;bottom:2px;right:2px;width:10px;height:10px;border-radius:50%;background:var(--green);border:2px solid #fff}
+        .side .name{font-size:0.8rem;font-weight:700;color:var(--text);margin-top:4px}
+        .side .title{font-size:0.5rem;color:var(--muted);font-weight:500}
+        .side .level{display:inline-block;background:var(--border);padding:1px 8px;border-radius:40px;font-size:0.45rem;font-weight:600;color:var(--muted);margin-top:2px}
+        .side .stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px}
+        .side .stat{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:6px;text-align:center}
+        .side .stat .val{font-size:0.9rem;font-weight:700;color:var(--text)}
+        .side .stat .lbl{font-size:0.4rem;color:var(--dim);font-weight:500;margin-top:1px}
+        .side .session-info{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:8px;text-align:center}
+        .side .session-info .si-label{font-size:0.4rem;color:var(--dim);font-weight:500}
+        .side .session-info .si-val{font-size:1rem;font-weight:700;color:var(--text);font-variant-numeric:tabular-nums}
+        .side .session-info .si-val.warn{color:var(--red);animation:blink 1s ease-in-out infinite}
+        .side .session-info .si-sub{font-size:0.4rem;color:var(--dim);margin-top:2px}
+        @keyframes blink{0%,100%{opacity:1}50%{opacity:0.5}}
+        .side .progress-bar{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:8px}
+        .side .progress-bar .pb-head{display:flex;justify-content:space-between;font-size:0.5rem;font-weight:600;color:var(--muted);margin-bottom:3px}
+        .side .progress-bar .pb-track{width:100%;height:4px;background:var(--border);border-radius:40px;overflow:hidden}
+        .side .progress-bar .pb-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent-light));border-radius:40px;transition:width 0.8s;width:0%}
+        .side .progress-bar .pb-name{font-size:0.45rem;color:var(--dim);margin-top:2px;text-align:center}
+        .side .privacy{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:6px 8px;font-size:0.4rem;color:var(--dim);line-height:1.4;text-align:center}
+        .side .privacy strong{color:var(--muted)}
+
+        /* CHAT */
+        .chat{flex:1;display:flex;flex-direction:column;background:var(--card);min-width:0}
+        .msgs{flex:1;padding:12px 16px;overflow-y:auto;display:flex;flex-direction:column;gap:10px;min-height:80px}
+        .msgs .mg{display:flex;flex-direction:column;gap:2px;max-width:85%}
+        .msgs .mg.user{align-self:flex-end;align-items:flex-end}
+        .msgs .mg.bot{align-self:flex-start;align-items:flex-start}
+        .msgs .mg.sys{align-self:center;max-width:92%}
+        .msgs .mg.correct{align-self:center}
+        .msgs .mg.wrong{align-self:center}
+        .msgs .mg .sender{font-size:0.45rem;font-weight:600;color:var(--dim);padding:0 4px;display:flex;align-items:center;gap:3px}
+        .msgs .mg .sender .av{width:14px;height:14px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:0.45rem}
+        .msgs .mg .bubble{padding:7px 12px;border-radius:14px;font-size:0.75rem;line-height:1.5;word-wrap:break-word;white-space:pre-wrap}
+        .msgs .mg.user .bubble{background:var(--text);color:#fff;border-bottom-right-radius:4px}
+        .msgs .mg.bot .bubble{background:var(--border);color:var(--text);border-bottom-left-radius:4px}
+        .msgs .mg.bot .bubble .thought{font-style:italic;color:var(--muted);font-size:0.6rem;margin-top:3px;display:block}
+        .msgs .mg.sys .bubble{background:var(--bg);color:var(--muted);font-size:0.55rem;padding:3px 12px;border-radius:40px;border:1px solid var(--border);text-align:center}
+        .msgs .mg.correct .bubble{background:#dcfce7;color:#166534;border:1px solid #86efac;font-weight:600}
+        .msgs .mg.wrong .bubble{background:#fee2e2;color:#991b1b;border:1px solid #fca5a5}
+        .msgs .mg.timeout .bubble{background:#fef3c7;color:#92400e;border:1px solid #fcd34d;font-weight:600}
+
+        /* MENTOR MODE TABS */
+        .mentor-tabs{display:flex;flex-wrap:wrap;gap:3px;padding:6px 16px;border-bottom:1px solid var(--border);display:none}
+        .mentor-tabs.visible{display:flex}
+        .mentor-tab{background:var(--bg);border:1px solid var(--border);border-radius:40px;padding:3px 10px;font-size:0.45rem;font-weight:500;color:var(--muted);cursor:pointer;transition:all 0.2s;font-family:inherit}
+        .mentor-tab:hover{border-color:var(--accent);color:var(--text)}
+        .mentor-tab.active{background:var(--accent);border-color:var(--accent);color:#fff}
+
+        /* TYPING */
+        .typing{display:none;padding:4px 16px;align-items:center;gap:6px;flex-shrink:0}
+        .typing.on{display:flex}
+        .typing .dots{display:flex;gap:3px}
+        .typing .dots span{width:5px;height:5px;background:var(--dim);border-radius:50%;animation:dp 1.2s ease-in-out infinite}
+        .typing .dots span:nth-child(2){animation-delay:0.2s}
+        .typing .dots span:nth-child(3){animation-delay:0.4s}
+        @keyframes dp{0%,60%,100%{opacity:0.2;transform:scale(0.8)}30%{opacity:1;transform:scale(1.2)}}
+
+        /* INPUT */
+        .inp{padding:8px 16px;border-top:1px solid var(--border);display:flex;gap:6px;align-items:flex-end;background:var(--card);flex-shrink:0;flex-wrap:wrap}
+        .inp .wrap{flex:1;display:flex;align-items:flex-end;gap:4px;background:var(--border);border-radius:40px;padding:3px 4px 3px 12px;transition:all 0.2s;border:2px solid transparent;min-width:80px}
+        .inp .wrap:focus-within{border-color:var(--accent);background:var(--card);box-shadow:0 0 0 4px var(--accent-glow)}
+        .inp .wrap textarea{flex:1;border:none;background:transparent;padding:4px 0;font-size:0.75rem;font-family:inherit;color:var(--text);resize:none;min-height:18px;max-height:70px;outline:none;width:100%}
+        .inp .wrap textarea::placeholder{color:var(--dim)}
+        .inp .wrap .btn-voice{background:transparent;border:none;padding:3px;border-radius:50%;color:var(--dim);cursor:pointer;font-size:0.9rem;transition:all 0.2s;display:none;align-items:center;justify-content:center;flex-shrink:0}
+        .inp .wrap .btn-voice.vis{display:flex}
+        .inp .wrap .btn-voice:hover{color:var(--accent)}
+        .inp .wrap .btn-voice.on{color:var(--red);background:rgba(239,68,68,0.1);animation:vp 0.8s ease-in-out infinite}
+        @keyframes vp{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}
+        .inp .send{background:var(--text);border:none;color:#fff;padding:6px 14px;border-radius:40px;font-size:0.65rem;font-weight:600;cursor:pointer;transition:all 0.2s;font-family:inherit;white-space:nowrap;flex-shrink:0}
+        .inp .send:hover{opacity:0.9;transform:translateY(-1px)}
+        .inp .send:disabled{opacity:0.4;cursor:not-allowed;transform:none}
+
+        /* EXPORT BAR */
+        .export-bar{padding:6px 16px;border-top:1px solid var(--border);display:none;gap:4px;align-items:center;flex-shrink:0}
+        .export-bar.vis{display:flex}
+        .export-bar button{background:var(--bg);border:1px solid var(--border);border-radius:40px;padding:3px 10px;font-size:0.45rem;font-weight:500;color:var(--muted);cursor:pointer;transition:all 0.2s;font-family:inherit;display:flex;align-items:center;gap:3px}
+        .export-bar button:hover{border-color:var(--accent);color:var(--text)}
+        .export-bar .spacer{flex:1}
+        .export-bar .clear{color:var(--red);border-color:#fecaca}
+
+        /* SETTINGS OVERLAY */
+        .settings-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(15,23,42,0.5);backdrop-filter:blur(10px);z-index:1000;justify-content:center;align-items:center;padding:16px}
+        .settings-overlay.open{display:flex}
+        .settings-panel{background:var(--card);border-radius:var(--radius);max-width:580px;width:100%;max-height:90vh;overflow-y:auto;padding:20px;box-shadow:0 30px 80px rgba(0,0,0,0.2);position:relative}
+        .settings-panel .s-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+        .settings-panel .s-hdr h2{font-size:1rem;font-weight:700;color:var(--text)}
+        .settings-panel .s-hdr .close{background:var(--border);border:none;width:28px;height:28px;border-radius:50%;font-size:0.8rem;color:var(--muted);cursor:pointer;display:flex;align-items:center;justify-content:center}
+        .settings-panel .s-sec{margin-bottom:14px}
+        .settings-panel .s-sec .s-title{font-size:0.6rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;border-bottom:1px solid var(--border);padding-bottom:4px}
+        .settings-panel .s-row{display:flex;align-items:center;justify-content:space-between;padding:4px 0;gap:10px;border-bottom:1px solid var(--bg)}
+        .settings-panel .s-row:last-child{border-bottom:none}
+        .settings-panel .s-row .s-lbl{font-size:0.65rem;color:var(--text);font-weight:500;flex:1;min-width:100px}
+        .settings-panel .s-row .s-lbl .desc{display:block;font-size:0.5rem;color:var(--dim);font-weight:400;margin-top:1px}
+        .settings-panel .s-row input,.settings-panel .s-row select{background:var(--bg);border:2px solid var(--border);border-radius:8px;padding:5px 10px;font-size:0.65rem;font-family:inherit;color:var(--text);transition:all 0.2s;outline:none;flex:1;min-width:70px}
+        .settings-panel .s-row input:focus,.settings-panel .s-row select:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-glow);background:var(--card)}
+        .settings-panel .s-row input.small{width:70px;flex:0 0 70px}
+        .settings-panel .s-row textarea{width:100%;padding:8px;border:2px solid var(--border);border-radius:8px;font-family:inherit;font-size:0.65rem;resize:vertical;background:var(--bg);transition:all 0.2s;outline:none;min-height:80px}
+        .settings-panel .s-row textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-glow);background:var(--card)}
+        .settings-panel .btn-save{width:100%;padding:10px;background:linear-gradient(135deg,var(--accent),var(--accent-light));color:#fff;border:none;border-radius:40px;font-size:0.75rem;font-weight:600;font-family:inherit;cursor:pointer;transition:all 0.3s;margin-top:6px;box-shadow:0 4px 16px rgba(199,121,74,0.2)}
+        .settings-panel .btn-save:hover{transform:translateY(-2px)}
+        .settings-panel .status{text-align:center;font-size:0.65rem;margin-top:8px;padding:6px 12px;border-radius:8px;display:none;font-weight:500}
+        .settings-panel .status.ok{display:block;background:#ecfdf5;color:#065f46;border:1px solid #a7f3d0}
+
+        /* COOLDOWN OVERLAY */
+        .cooldown-overlay{display:none;position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(248,250,252,0.95);z-index:500;justify-content:center;align-items:center;flex-direction:column;gap:12px;border-radius:var(--radius)}
+        .cooldown-overlay.on{display:flex}
+        .cooldown-overlay .cd-icon{font-size:3rem}
+        .cooldown-overlay .cd-title{font-size:1.1rem;font-weight:700;color:var(--text)}
+        .cooldown-overlay .cd-msg{font-size:0.75rem;color:var(--muted);text-align:center;max-width:400px;line-height:1.5}
+        .cooldown-overlay .cd-timer{font-size:2rem;font-weight:700;color:var(--accent);font-variant-numeric:tabular-nums}
+        .cooldown-overlay .cd-btn{background:var(--text);color:#fff;border:none;padding:8px 20px;border-radius:40px;font-size:0.7rem;font-weight:600;cursor:pointer;font-family:inherit}
+
+        /* RESPONSIVE */
+        @media(max-width:768px){
+            body{padding:4px}
+            .app{border-radius:14px;max-height:100vh}
+            .side{display:none}
+            .msgs .mg{max-width:95%}
+            .msgs .mg .bubble{font-size:0.7rem;padding:5px 10px}
+        }
+        @media(max-width:480px){
+            .hdr{padding:6px 10px;min-height:40px}
+            .hdr .logo h1{font-size:0.75rem}
+            .hdr .badge{font-size:0.35rem;padding:1px 6px}
+            .mode-tab{font-size:0.4rem;padding:3px 8px}
+            .inp .send{padding:4px 10px;font-size:0.55rem}
+        }
+
+        .msgs::-webkit-scrollbar,.side::-webkit-scrollbar{width:3px}
+        .msgs::-webkit-scrollbar-thumb,.side::-webkit-scrollbar-thumb{background:var(--border);border-radius:10px}
+        .float{position:fixed;font-family:'Inter',sans-serif;font-size:1rem;font-weight:700;pointer-events:none;z-index:999;animation:fu 1.5s ease-out forwards}
+        @keyframes fu{0%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:0;transform:translateY(-80px) scale(1.1)}}
+        .float.xp{color:#b8a0d4}.float.hp{color:#fca5a5}
+    </style>
+</head>
+<body>
+
+<div class="app">
+    <header class="hdr">
+        <div class="logo">
+            <h1>📚 <span>Study Buddy</span></h1>
+            <span class="badge" id="modeBadge">Teach the Bot</span>
+            <span class="badge session" id="sessionBadge" style="display:none">⏱️ --:--</span>
+            <span class="badge cooldown" id="cooldownBadge" style="display:none">🔒 Cooldown</span>
+            <span class="badge daily" id="dailyBadge" style="display:none">📊 0/0 today</span>
+        </div>
+        <div class="actions">
+            <button id="resetBtn">🔄 Reset</button>
+            <button id="settingsBtn">⚙️ Settings</button>
+            <button class="primary" id="startSessionBtn">▶ Start Session</button>
+        </div>
+    </header>
+
+    <div class="mode-tabs">
+        <button class="mode-tab active" data-mode="teach">🧙 Teach the Bot</button>
+        <button class="mode-tab" data-mode="mentor">🎓 Study Mentor</button>
+        <button class="mode-tab" data-mode="summary">📋 Summary</button>
+    </div>
+
+    <div class="mentor-tabs" id="mentorTabs">
+        <button class="mentor-tab active" data-mentor="homework">📚 Homework</button>
+        <button class="mentor-tab" data-mentor="explain">💡 Explain</button>
+        <button class="mentor-tab" data-mentor="career">🎯 Career</button>
+        <button class="mentor-tab" data-mentor="resume">📄 Resume</button>
+        <button class="mentor-tab" data-mentor="references">📖 References</button>
+        <button class="mentor-tab" data-mentor="pitch">🚀 Pitch</button>
+    </div>
+
+    <div class="main">
+        <aside class="side">
+            <div class="avatar-box">
+                <div class="avatar" id="avatarEl">🧠</div>
+                <div class="name" id="avatarName">Dunce Twin</div>
+                <div class="title" id="avatarTitle">The Beginner</div>
+                <div class="level" id="avatarLevel">Lv. 1</div>
+            </div>
+            <div class="stat-grid">
+                <div class="stat"><div class="val" id="statXP">0</div><div class="lbl">XP</div></div>
+                <div class="stat"><div class="val" id="statLessons">0</div><div class="lbl">Lessons</div></div>
+                <div class="stat"><div class="val" id="statTopics">0</div><div class="lbl">Topics</div></div>
+                <div class="stat"><div class="val" id="statHP">100</div><div class="lbl">HP</div></div>
+            </div>
+            <div class="progress-bar">
+                <div class="pb-head"><span>📚 Topic</span><span id="topicPct">0%</span></div>
+                <div class="pb-track"><div class="pb-fill" id="topicFill"></div></div>
+                <div class="pb-name" id="topicName">The Basics</div>
+            </div>
+            <div class="session-info">
+                <div class="si-label">⏱️ Session Timer</div>
+                <div class="si-val" id="timerDisplay">00:00</div>
+                <div class="si-sub" id="sessionStatus">Not started</div>
+            </div>
+            <div class="privacy">
+                <strong>🔒 Privacy:</strong> Your data stays on this device. AI calls go only to your chosen provider. We never see your conversations.
+            </div>
+        </aside>
+
+        <main class="chat">
+            <div class="msgs" id="chatMsgs">
+                <div class="mg sys"><div class="bubble">📚 Welcome to Study Buddy!</div></div>
+                <div class="mg sys"><div class="bubble">Teach the bot what you know, or ask the mentor anything.</div></div>
+                <div class="mg bot">
+                    <div class="sender"><span class="av">🧙</span> Study Buddy</div>
+                    <div class="bubble">Hi! I'm ready to learn from you. What do you want to teach me today? 🤔<span class="thought">I learn when you teach me!</span></div>
+                </div>
+            </div>
+
+            <div class="typing" id="typing"><span style="font-size:0.5rem;color:var(--dim)">Thinking</span><div class="dots"><span></span><span></span><span></span></div></div>
+
+            <div class="inp">
+                <div class="wrap">
+                    <textarea id="userInput" rows="1" placeholder="Teach me something..." maxlength="2000"></textarea>
+                    <button class="btn-voice" id="voiceBtn" title="Voice input">🎙️</button>
+                </div>
+                <button class="send" id="sendBtn">Send</button>
+            </div>
+
+            <div class="export-bar" id="exportBar">
+                <button id="exportPDF">📄 PDF</button>
+                <button id="exportPPTX">📊 PPT</button>
+                <button id="exportVoice">🔊 Voice</button>
+                <div class="spacer"></div>
+                <button class="clear" id="clearChat">🗑️ Clear</button>
+            </div>
+
+            <div class="cooldown-overlay" id="cooldownOverlay">
+                <div class="cd-icon">🔒</div>
+                <div class="cd-title">Cooldown Active</div>
+                <div class="cd-msg">You've reached your session limit. Take a break! Your brain consolidates learning during rest.</div>
+                <div class="cd-timer" id="cooldownTimer">05:00</div>
+                <button class="cd-btn" id="cooldownOk">Got it</button>
+            </div>
+        </main>
+    </div>
+</div>
+
+<!-- SETTINGS -->
+<div class="settings-overlay" id="settingsOverlay">
+    <div class="settings-panel">
+        <div class="s-hdr"><h2>⚙️ Settings</h2><button class="close" id="closeSettings">✕</button></div>
+        <div class="s-sec">
+            <div class="s-title">🔑 AI Provider</div>
+            <div class="s-row">
+                <div class="s-lbl">API Key<span class="desc">OpenRouter or OpenAI key (BYOK)</span></div>
+                <input type="password" id="cfgApiKey" placeholder="sk-or-v1-..." class="" />
+            </div>
+            <div class="s-row">
+                <div class="s-lbl">Model<span class="desc">Auto routes to best free model</span></div>
+                <select id="cfgModel">
+                    <option value="auto">🌀 Auto-Route (free models)</option>
+                    <option value="openai/gpt-4o-mini">GPT-4o Mini</option>
+                    <option value="openai/gpt-3.5-turbo">GPT-3.5 Turbo</option>
+                    <option value="meta-llama/llama-3.2-3b-instruct">Llama 3.2 3B</option>
+                    <option value="google/gemini-2.0-flash-001">Gemini 2.0 Flash</option>
+                </select>
+            </div>
+            <div class="s-row">
+                <div class="s-lbl">Temperature<span class="desc">Creativity 0-2</span></div>
+                <input type="number" id="cfgTemp" value="0.7" min="0" max="2" step="0.05" class="small" />
+            </div>
+            <div class="s-row">
+                <div class="s-lbl">Fallback<span class="desc">Simulated if API fails</span></div>
+                <select id="cfgFallback"><option value="true">Enabled</option><option value="false">Disabled</option></select>
+            </div>
+        </div>
+        <div class="s-sec">
+            <div class="s-title">📚 Knowledge Base (Teach the Bot)</div>
+            <div class="s-row" style="flex-direction:column;align-items:stretch;gap:4px">
+                <div class="s-lbl">Facts & Questions<span class="desc">One per line: "Question - Answer"</span></div>
+                <textarea id="cfgKB" rows="5">What is the capital of France? - Paris
+How many planets in our solar system? - 8
+What is the chemical symbol for water? - H2O
+What is the speed of light? - 299,792,458 m/s
+What process do plants use? - Photosynthesis
+How many bones in the human body? - 206
+What is Earth's natural satellite? - The Moon
+What force pulls objects together? - Gravity</textarea>
+            </div>
+        </div>
+        <div class="s-sec">
+            <div class="s-title">⏱️ Session Limits</div>
+            <div class="s-row">
+                <div class="s-lbl">Per-Session Cap<span class="desc">Minutes per session</span></div>
+                <select id="cfgSessionCap"><option value="5">5 min</option><option value="10" selected>10 min</option><option value="15">15 min</option><option value="20">20 min</option><option value="30">30 min</option><option value="0">Unlimited</option></select>
+            </div>
+            <div class="s-row">
+                <div class="s-lbl">Cooldown<span class="desc">Minutes between sessions</span></div>
+                <select id="cfgCooldown"><option value="2">2 min</option><option value="5" selected>5 min</option><option value="10">10 min</option><option value="15">15 min</option><option value="0">None</option></select>
+            </div>
+            <div class="s-row">
+                <div class="s-lbl">Daily Cap<span class="desc">Max sessions per day</span></div>
+                <input type="number" id="cfgDailyCap" value="6" min="1" max="50" class="small" />
+            </div>
+            <div class="s-row">
+                <div class="s-lbl">Warning (sec)<span class="desc">Before session ends</span></div>
+                <input type="number" id="cfgWarning" value="30" min="5" max="120" class="small" />
+            </div>
+        </div>
+        <div class="s-sec">
+            <div class="s-title">🎮 Level Unlocks</div>
+            <div class="s-row">
+                <div class="s-lbl">Voice Input<span class="desc">Unlock level</span></div>
+                <input type="number" id="cfgVoiceLvl" value="5" min="1" max="50" class="small" />
+            </div>
+            <div class="s-row">
+                <div class="s-lbl">Commands<span class="desc">Unlock level</span></div>
+                <input type="number" id="cfgCmdLvl" value="10" min="1" max="50" class="small" />
+            </div>
+        </div>
+        <button class="btn-save" id="saveSettings">💾 Save Settings</button>
+        <div class="status" id="settingsStatus"></div>
+    </div>
+</div>
+
+<script>
+(function(){
+'use strict';
+
+const STORAGE_KEY = 'study_buddy_v1';
+const SESSION_KEY = 'study_buddy_sessions';
+
+const EVOLUTIONS = [
+    {level:1,name:'Dunce Twin',title:'The Beginner',emoji:'🧠',color:'#fcd34d'},
+    {level:2,name:'Curious Sprout',title:'The Learner',emoji:'🌿',color:'#6b9e7a'},
+    {level:3,name:'Bright Star',title:'The Thinker',emoji:'🌟',color:'#fbbf24'},
+    {level:5,name:'Spark Wizard',title:'The Smart One',emoji:'⚡',color:'#a78bfa'},
+    {level:10,name:'Ember Mage',title:'The Wise One',emoji:'🔥',color:'#f472b6'},
+    {level:20,name:'Wave Sage',title:'The Master',emoji:'🌊',color:'#60a5fa'},
+    {level:50,name:'Royal Scholar',title:'The Legend',emoji:'👑',color:'#f59e0b'},
+];
+
+const TOPICS = ['The Basics','Numbers','Words','Colors','Shapes','Animals','Plants','Space','Weather','Music','Food','History','Geography','Science','Math'];
+
+const MENTOR_MODES = {
+    homework:{label:'Homework Helper',system:'You are Study Buddy, a peer-styled homework helper. You help students understand concepts step-by-step. Be encouraging, use simple language, and give practical examples. Never do the work for them — guide them to the answer.',welcome:'📚 Stuck on homework? Share your question or topic.'},
+    explain:{label:'Topic Explainer',system:'You are Study Buddy, a topic explainer. Break down complex topics into simple, clear explanations. Use analogies and real-world examples. Keep it conversational and friendly.',welcome:'💡 What topic should I explain? I\'ll make it simple.'},
+    career:{label:'Career Expert',system:'You are Study Buddy, a career guidance expert. Help students with career paths, skill development, and professional growth. Be practical and encouraging.',welcome:'🎯 Tell me about your interests or career goals.'},
+    resume:{label:'Resume Review',system:'You are Study Buddy, a resume analyst. Review resumes against job requirements and provide specific, actionable improvement suggestions.',welcome:'📄 Paste your resume or describe your experience.'},
+    references:{label:'Reference Generator',system:'You are Study Buddy, an academic reference generator. Create properly formatted references in APA, MLA, or Chicago style.',welcome:'📖 Give me your sources and I\'ll format them.'},
+    pitch:{label:'Pitch Generator',system:'You are Study Buddy, a pitch generator. Help students develop compelling project pitches with: Title, Problem, Solution, Features, Audience, Impact. End with a note about PPTX export.',welcome:'🚀 Share your project idea for a pitch deck.'},
+};
+
+let state = loadState();
+let knowledgeBase = parseKB(state.kbText);
+let usedQuestions = [];
+let currentQuestion = null;
+let chatHistory = [];
+let currentMode = 'teach';
+let currentMentor = 'homework';
+let sessionInterval = null;
+let cooldownInterval = null;
+
+function defaultState(){
+    return {
+        level:1,xp:0,hp:100,maxHP:100,lessons:0,topicsCompleted:0,topicProgress:0,currentTopic:'The Basics',
+        xpPerLevel:20,
+        apiKey:'',model:'auto',temperature:0.7,useFallback:true,
+        sessionCap:10,cooldownMin:5,dailyCap:6,warningSec:30,
+        voiceUnlockLevel:5,cmdUnlockLevel:10,
+        kbText:'What is the capital of France? - Paris\nHow many planets in our solar system? - 8\nWhat is the chemical symbol for water? - H2O\nWhat is the speed of light? - 299,792,458 m/s\nWhat process do plants use? - Photosynthesis\nHow many bones in the human body? - 206\nWhat is Earth\'s natural satellite? - The Moon\nWhat force pulls objects together? - Gravity',
+        sessionEnded:false,sessionStarted:false,timeRemaining:600,timerRunning:false,
+    };
+}
+
+function loadState(){
+    try{const s=localStorage.getItem(STORAGE_KEY);return s?{...defaultState(),...JSON.parse(s)}:defaultState()}catch(e){return defaultState()}
+}
+function saveState(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(state))}catch(e){}}
+
+function parseKB(text){
+    return text.split('\n').filter(l=>l.trim()).map(l=>{
+        const parts=l.split(/[—\-:;.]/);
+        if(parts.length>=2){const q=parts[0].trim(),a=parts.slice(1).join(' ').trim();if(q.length>3&&a.length>1)return{q,a}}
+        return null;
+    }).filter(Boolean);
+}
+
+function getEvolution(lv){let s=EVOLUTIONS[0];for(const e of EVOLUTIONS)if(lv>=e.level)s=e;return s}
+function todayKey(){return new Date().toISOString().slice(0,10)}
+function getSessionsToday(){try{const d=JSON.parse(localStorage.getItem(SESSION_KEY)||'{}');return d[todayKey()]||0}catch(e){return 0}}
+function incrementSessions(){try{const d=JSON.parse(localStorage.getItem(SESSION_KEY)||'{}');d[todayKey()]=(d[todayKey()]||0)+1;localStorage.setItem(SESSION_KEY,JSON.stringify(d))}catch(e){}}
+function getCooldownEnd(){try{return parseInt(sessionStorage.getItem('sb_cooldown')||'0')}catch(e){return 0}}
+
+const $=id=>document.getElementById(id);
+const chatMsgs=$('chatMsgs'),userInput=$('userInput'),sendBtn=$('sendBtn'),typing=$('typing');
+const avatarEl=$('avatarEl'),avatarName=$('avatarName'),avatarTitle=$('avatarTitle'),avatarLevel=$('avatarLevel');
+const statXP=$('statXP'),statLessons=$('statLessons'),statTopics=$('statTopics'),statHP=$('statHP');
+const topicFill=$('topicFill'),topicPct=$('topicPct'),topicName=$('topicName');
+const sessionBadge=$('sessionBadge'),cooldownBadge=$('cooldownBadge'),dailyBadge=$('dailyBadge');
+const timerDisplay=$('timerDisplay'),sessionStatus=$('sessionStatus');
+const modeBadge=$('modeBadge'),mentorTabs=$('mentorTabs');
+const startSessionBtn=$('startSessionBtn'),exportBar=$('exportBar');
+const cooldownOverlay=$('cooldownOverlay'),cooldownTimer=$('cooldownTimer');
+
+function updateUI(){
+    const e=getEvolution(state.level);
+    avatarEl.textContent=e.emoji;avatarEl.style.background=`linear-gradient(135deg,${e.color},${e.color}dd)`;
+    avatarName.textContent=e.name;avatarTitle.textContent=e.title;avatarLevel.textContent=`Lv. ${state.level}`;
+    statXP.textContent=state.xp;statLessons.textContent=state.lessons;statTopics.textContent=state.topicsCompleted;statHP.textContent=state.hp;
+    const p=Math.min(100,state.topicProgress);topicFill.style.width=p+'%';topicPct.textContent=Math.floor(p)+'%';topicName.textContent=state.currentTopic;
+
+    const today=getSessionsToday();
+    dailyBadge.style.display='';dailyBadge.textContent=`📊 ${today}/${state.dailyCap} today`;
+    if(state.sessionCap>0){dailyBadge.style.display=today>=state.dailyCap?'':'none'}
+
+    const cdEnd=getCooldownEnd();
+    if(cdEnd>Date.now()){
+        cooldownBadge.style.display='';
+        startSessionBtn.disabled=true;
+    } else {
+        cooldownBadge.style.display='none';
+        startSessionBtn.disabled= today>=state.dailyCap && state.dailyCap>0;
+    }
+}
+
+function addMsg(role,content,sender=''){
+    const g=document.createElement('div');g.className=`mg ${role}`;
+    if(role==='user'){g.innerHTML=`<div class="sender"><span class="av">🧙</span> You</div><div class="bubble">${esc(content)}</div>`}
+    else if(role==='bot'){g.innerHTML=`<div class="sender"><span class="av">📚</span>${sender||'Study Buddy'}</div><div class="bubble">${content}</div>`}
+    else{g.innerHTML=`<div class="bubble">${content}</div>`}
+    chatMsgs.appendChild(g);chatMsgs.scrollTop=chatMsgs.scrollHeight;
+}
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+function showTyping(v){typing.classList.toggle('on',v);chatMsgs.scrollTop=chatMsgs.scrollHeight}
+function floatText(text,type='xp'){const el=document.createElement('div');el.className=`float ${type}`;el.textContent=text;el.style.left=(window.innerWidth/2+(Math.random()-0.5)*120)+'px';el.style.top=(window.innerHeight/2+(Math.random()-0.5)*60)+'px';document.body.appendChild(el);setTimeout(()=>el.remove(),1400)}
+
+function checkLevelUp(){
+    const nl=Math.floor(state.xp/state.xpPerLevel)+1;
+    if(nl>state.level){state.level=nl;state.hp=Math.min(state.maxHP,state.hp+10);addMsg('sys',`🎉 Level Up! You reached Level ${state.level}!`);return true}
+    return false;
+}
+
+function generateQuestion(){
+    const avail=knowledgeBase.filter(q=>!usedQuestions.includes(q.q));
+    if(!avail.length){usedQuestions=[];return generateQuestion()}
+    const sel=avail[Math.floor(Math.random()*avail.length)];usedQuestions.push(sel.q);return sel;
+}
+
+async function callAI(messages){
+    if(state.apiKey && state.model!=='auto'){
+        try{
+            const r=await fetch('https://openrouter.ai/api/v1/chat/completions',{method:'POST',headers:{'Authorization':`Bearer ${state.apiKey}`,'Content-Type':'application/json','HTTP-Referer':window.location.href,'X-Title':'Study Buddy'},body:JSON.stringify({model:state.model,messages,temperature:state.temperature,max_tokens:800})});
+            if(r.ok){const d=await r.json();return d.choices?.[0]?.message?.content||null}
+        }catch(e){}
+    }
+    if(state.apiKey){
+        const fallbacks=['google/gemini-2.0-flash-001','meta-llama/llama-3.2-3b-instruct:free','openai/gpt-3.5-turbo'];
+        for(const m of fallbacks){
+            try{const r=await fetch('https://openrouter.ai/api/v1/chat/completions',{method:'POST',headers:{'Authorization':`Bearer ${state.apiKey}`,'Content-Type':'application/json','HTTP-Referer':window.location.href,'X-Title':'Study Buddy'},body:JSON.stringify({model:m,messages,temperature:state.temperature,max_tokens:800})});
+            if(r.ok){const d=await r.json();return d.choices?.[0]?.message?.content||null}}catch(e){}
+        }
+    }
+    return getFallback(messages[messages.length-1]?.content||'');
+}
+function getFallback(msg){
+    const t=currentMode==='teach'?
+        ["Oh! I think I understand a little better now! 🤔","That makes sense! Thank you! 😊","I'm still a bit confused, but learning! 🙈","Wow! Tell me more! 🧠","I think I'm getting it! 🌟","Hmm... can you explain differently? 😅","You're a great teacher! 🥰"]:
+        ["That's a great question! Let me think... 🤔","Here's what I know about this: 💡","I'd suggest breaking this down step by step 📚","Great topic! Let me help you understand it better 🌟"];
+    return t[Math.floor(Math.random()*t.length)];
+}
+
+async function handleSend(){
+    const text=userInput.value.trim();
+    if(!text||state.isThinking)return;
+    if(state.sessionEnded){addMsg('sys','⏰ Session ended. Start a new one.');return}
+    if(currentMode==='summary'){addMsg('sys','📋 Switch to Teach or Mentor mode to chat.');return}
+
+    userInput.value='';state.isThinking=true;sendBtn.disabled=true;showTyping(true);
+
+    if(currentMode==='teach'&&currentQuestion){
+        const isCorrect=text.toLowerCase().trim()===currentQuestion.a.toLowerCase().trim();
+        if(isCorrect){
+            addMsg('correct','✅ Correct! Great job! 🌟');
+            const xpGain=3+Math.floor(Math.random()*2);state.xp+=xpGain;state.topicProgress=Math.min(100,state.topicProgress+10);
+            floatText(`+${xpGain} ⭐`,'xp');
+            if(state.topicProgress>=100){
+                state.topicProgress=0;state.topicsCompleted+=1;const bx=5+state.level;state.xp+=bx;
+                addMsg('sys',`🎉 Topic Complete! +${bx} XP!`);state.currentTopic=TOPICS[Math.floor(Math.random()*TOPICS.length)];
+                addMsg('sys',`📚 New Topic: ${state.currentTopic}`);
+            }
+        }else{
+            addMsg('wrong',`❌ Answer: ${currentQuestion.a}`);state.hp=Math.max(0,state.hp-5);floatText('-5 ❤️','hp');
+        }
+        state.lessons+=1;checkLevelUp();updateUI();saveState();
+        currentQuestion=null;setTimeout(()=>askQuestion(),1200);
+        state.isThinking=false;sendBtn.disabled=false;showTyping(false);return;
+    }
+
+    let messages;
+    if(currentMode==='teach'){
+        messages=[{role:'system',content:'You are "Dunce AI" — a confused, naive student who doesn\'t understand the subject. You are humble, curious, and ask questions. Keep responses short (2-3 sentences). Use emojis.'},{role:'user',content:text}];
+    }else{
+        const m=MENTOR_MODES[currentMentor];
+        messages=[{role:'system',content:m.system},...chatHistory.slice(-20),{role:'user',content:text}];
+    }
+
+    const reply=await callAI(messages);
+    state.isThinking=false;sendBtn.disabled=false;showTyping(false);
+
+    if(reply){
+        if(currentMode==='teach'){addMsg('bot',reply,'Dunce AI')}
+        else{addMsg('bot',reply,MENTOR_MODES[currentMentor].label)}
+        chatHistory.push({role:'user',content:text},{role:'assistant',content:reply});
+        state.xp+=1;checkLevelUp();updateUI();saveState();
+    }else{
+        addMsg('sys','⚠️ No response. Check your API key in Settings.');
+    }
+    if(currentMode==='teach')askQuestion();
+}
+
+function askQuestion(){
+    const q=generateQuestion();currentQuestion=q;
+    addMsg('bot',`❓ ${q.q}`,'Dunce AI');addMsg('sys','💡 Type your answer below!');
+    userInput.placeholder='Type your answer...';userInput.focus();
+}
+
+function startSession(){
+    const cdEnd=getCooldownEnd();
+    if(cdEnd>Date.now()){showCooldown(cdEnd-Date.now());return}
+    const today=getSessionsToday();
+    if(today>=state.dailyCap&&state.dailyCap>0){addMsg('sys',`📊 Daily limit reached (${state.dailyCap} sessions). Come back tomorrow!`);return}
+
+    if(state.sessionCap<=0){state.sessionEnded=false;state.sessionStarted=true;startSessionBtn.textContent='⏳ Running...';startSessionBtn.disabled=true;addMsg('sys','♾️ Unlimited session started!');if(currentMode==='teach')askQuestion();return}
+
+    state.timeRemaining=state.sessionCap*60;state.sessionEnded=false;state.sessionStarted=true;
+    startSessionBtn.textContent='⏳ Running...';startSessionBtn.disabled=true;
+    incrementSessions();updateUI();
+
+    sessionBadge.style.display='';
+    sessionInterval=setInterval(()=>{
+        state.timeRemaining--;
+        const m=Math.floor(state.timeRemaining/60),s=state.timeRemaining%60;
+        const ts=`${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+        sessionBadge.textContent=`⏱️ ${ts}`;timerDisplay.textContent=ts;
+        if(state.timeRemaining<=state.warningSec&&state.timeRemaining>0){timerDisplay.classList.add('warn');sessionBadge.classList.add('cooldown')}
+        if(state.timeRemaining<=0){
+            clearInterval(sessionInterval);sessionInterval=null;state.sessionEnded=true;state.timerRunning=false;
+            startSessionBtn.textContent='✅ Done';timerDisplay.classList.remove('warn');
+            addMsg('timeout','⏰ **Session Ended!** Great effort! Your progress is saved.');
+            sendBtn.disabled=true;userInput.disabled=true;
+            if(state.cooldownMin>0){
+                const cdEnd=Date.now()+state.cooldownMin*60*1000;try{sessionStorage.setItem('sb_cooldown',String(cdEnd))}catch(e){}
+                showCooldown(state.cooldownMin*60*1000);
+            }
+            updateUI();
+        }
+    },1000);
+
+    addMsg('sys',`⏱️ Session started! ${state.sessionCap} minutes.`);
+    if(currentMode==='teach')setTimeout(askQuestion,800);
+}
+
+function showCooldown(ms){
+    cooldownOverlay.classList.add('on');
+    let remaining=ms;
+    cooldownInterval=setInterval(()=>{
+        remaining-=1000;if(remaining<=0){clearInterval(cooldownInterval);cooldownOverlay.classList.remove('on');updateUI();return}
+        const m=Math.floor(remaining/60000),s=Math.floor((remaining%60000)/1000);
+        cooldownTimer.textContent=`${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+    },1000);
+}
+$('cooldownOk').onclick=()=>{cooldownOverlay.classList.remove('on');if(cooldownInterval)clearInterval(cooldownInterval);updateUI()};
+
+function switchMode(mode){
+    currentMode=mode;
+    document.querySelectorAll('.mode-tab').forEach(t=>t.classList.toggle('active',t.dataset.mode===mode));
+    modeBadge.textContent=mode==='teach'?'Teach the Bot':mode==='mentor'?'Study Mentor':'Summary';
+    mentorTabs.classList.toggle('visible',mode==='mentor');
+    exportBar.classList.toggle('vis',mode==='summary'||chatMsgs.children.length>3);
+    userInput.placeholder=mode==='teach'?'Teach me something...':mode==='mentor'?'Ask your mentor...':'';
+    if(mode==='mentor')switchMentor(currentMentor);
+}
+
+function switchMentor(m){
+    currentMentor=m;
+    document.querySelectorAll('.mentor-tab').forEach(t=>t.classList.toggle('active',t.dataset.mentor===m));
+    chatHistory=[];
+    addMsg('bot',MENTOR_MODES[m].welcome,MENTOR_MODES[m].label);
+    userInput.focus();
+}
+
+function resetApp(){
+    if(!confirm('Reset all progress?'))return;
+    Object.assign(state,defaultState());saveState();knowledgeBase=parseKB(state.kbText);usedQuestions=[];currentQuestion=null;chatHistory=[];
+    if(sessionInterval){clearInterval(sessionInterval);sessionInterval=null}
+    chatMsgs.innerHTML='<div class="mg sys"><div class="bubble">🔄 Fresh start!</div></div><div class="mg bot"><div class="sender"><span class="av">📚</span> Study Buddy</div><div class="bubble">Ready to learn! What do you want to teach me? 🤔</div></div>';
+    startSessionBtn.textContent='▶ Start Session';startSessionBtn.disabled=false;
+    sendBtn.disabled=false;userInput.disabled=false;sessionBadge.style.display='none';
+    timerDisplay.textContent='00:00';sessionStatus.textContent='Not started';
+    updateUI();
+}
+
+function openSettings(){
+    $('settingsOverlay').classList.add('open');
+    $('cfgApiKey').value=state.apiKey||'';$('cfgModel').value=state.model||'auto';
+    $('cfgTemp').value=state.temperature;$('cfgFallback').value=String(state.useFallback);
+    $('cfgKB').value=state.kbText;$('cfgSessionCap').value=state.sessionCap;
+    $('cfgCooldown').value=state.cooldownMin;$('cfgDailyCap').value=state.dailyCap;
+    $('cfgWarning').value=state.warningSec;$('cfgVoiceLvl').value=state.voiceUnlockLevel;
+    $('cfgCmdLvl').value=state.cmdUnlockLevel;
+}
+function saveSettings(){
+    state.apiKey=$('cfgApiKey').value.trim();state.model=$('cfgModel').value;
+    state.temperature=parseFloat($('cfgTemp').value)||0.7;state.useFallback=$('cfgFallback').value==='true';
+    state.kbText=$('cfgKB').value;knowledgeBase=parseKB(state.kbText);usedQuestions=[];
+    state.sessionCap=parseInt($('cfgSessionCap').value)||10;state.cooldownMin=parseInt($('cfgCooldown').value)||5;
+    state.dailyCap=parseInt($('cfgDailyCap').value)||6;state.warningSec=parseInt($('cfgWarning').value)||30;
+    state.voiceUnlockLevel=parseInt($('cfgVoiceLvl').value)||5;state.cmdUnlockLevel=parseInt($('cfgCmdLvl').value)||10;
+    saveState();updateUI();
+    $('settingsStatus').className='status ok';$('settingsStatus').textContent='✅ Saved!';
+    setTimeout(()=>{$('settingsOverlay').classList.remove('open');$('settingsStatus').className='status'},1500);
+}
+
+function exportPDF(){
+    try{
+        const{jsPDF}=window.jspdf;const doc=new jsPDF('p','mm','a4');
+        let text='Study Buddy Session Summary\n\n';
+        for(const c of chatMsgs.children){
+            const b=c.querySelector('.bubble');if(b)text+=b.textContent+'\n\n';
+        }
+        const lines=doc.splitTextToSize(text,180);doc.setFontSize(11);doc.text(lines,15,20);
+        doc.save('StudyBuddy_Summary.pdf');addMsg('sys','📄 PDF exported!');
+    }catch(e){addMsg('sys','❌ PDF error: '+e.message)}
+}
+function exportPPTX(){
+    try{
+        const pptx=new PptxGenJS();pptx.defineLayout({name:'WIDE',width:13.33,height:7.5});pptx.layout='WIDE';
+        const s1=pptx.addSlide();s1.background={color:'0f172a'};
+        s1.addText('📚 Study Buddy Summary',{x:0.5,y:1.0,w:12.33,h:2,fontSize:40,color:'ffffff',align:'center',bold:true});
+        s1.addText(new Date().toLocaleDateString(),{x:0.5,y:3.5,w:12.33,h:0.8,fontSize:16,color:'8899bb',align:'center'});
+        const s2=pptx.addSlide();s2.background={color:'0b0f17'};
+        let text='Session Highlights\n\n';
+        for(const c of chatMsgs.children){const b=c.querySelector('.bubble');if(b)text+=b.textContent+'\n'}
+        s2.addText(text.substring(0,2000),{x:0.8,y:0.5,w:11.73,h:6,fontSize:14,color:'eaf0fa',valign:'top',lineSpacing:22});
+        pptx.writeFile({fileName:'StudyBuddy_Summary.pptx'}).then(()=>addMsg('sys','📊 PPT exported!'));
+    }catch(e){addMsg('sys','❌ PPT error: '+e.message)}
+}
+function exportVoice(){
+    if(!('speechSynthesis' in window)){addMsg('sys','⚠️ Voice not supported');return}
+    let text='';for(const c of chatMsgs.children){const b=c.querySelector('.bubble');if(b)text+=b.textContent+' '}
+    const clean=text.replace(/\*\*/g,'').replace(/#/g,'').replace(/\n/g,'. ').replace(/\s+/g,' ').trim().substring(0,3000);
+    window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(clean);u.rate=0.9;
+    window.speechSynthesis.speak(u);addMsg('sys','🔊 Speaking...');
+}
+
+let recognition=null,isListening=false;
+if('webkitSpeechRecognition' in window||'SpeechRecognition' in window){
+    const SR=window.SpeechRecognition||window.webkitSpeechRecognition;recognition=new SR();
+    recognition.lang='en-US';recognition.continuous=false;recognition.interimResults=true;
+    recognition.onstart=()=>{isListening=true;$('voiceBtn').classList.add('on');$('voiceBtn').textContent='🔴'};
+    recognition.onend=()=>{isListening=false;$('voiceBtn').classList.remove('on');$('voiceBtn').textContent='🎙️'};
+    recognition.onresult=e=>{let f='';for(let i=e.resultIndex;i<e.results.length;i++){if(e.results[i].isFinal){f+=e.results[i][0].transcript}}if(f){userInput.value=f;handleSend()}else{userInput.value=e.results[e.resultIndex]?.[0]?.transcript||''}};
+    recognition.onerror=()=>{isListening=false;$('voiceBtn').classList.remove('on');$('voiceBtn').textContent='🎙️'};
+}
+$('voiceBtn').onclick=()=>{if(!recognition)return;if(isListening)recognition.stop();else try{recognition.start()}catch(e){}};
+
+sendBtn.onclick=handleSend;
+userInput.onkeydown=e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();handleSend()}};
+startSessionBtn.onclick=startSession;
+$('resetBtn').onclick=resetApp;
+$('settingsBtn').onclick=openSettings;
+$('closeSettings').onclick=()=>$('settingsOverlay').classList.remove('open');
+$('saveSettings').onclick=saveSettings;
+$('settingsOverlay').onclick=e=>{if(e.target.id==='settingsOverlay')$('settingsOverlay').classList.remove('open')};
+$('exportPDF').onclick=exportPDF;$('exportPPTX').onclick=exportPPTX;$('exportVoice').onclick=exportVoice;
+$('clearChat').onclick=()=>{chatMsgs.innerHTML='';chatHistory=[];addMsg('sys','🗑️ Chat cleared.')};
+
+document.querySelectorAll('.mode-tab').forEach(t=>t.onclick=()=>switchMode(t.dataset.mode));
+document.querySelectorAll('.mentor-tab').forEach(t=>t.onclick=()=>switchMentor(t.dataset.mentor));
+
+updateUI();
+})();
+</script>
+</body>
+</html>

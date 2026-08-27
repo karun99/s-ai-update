@@ -1,0 +1,21 @@
+{
+  "name": "mcp-builder",
+  "version": "1.0.0",
+  "description": "Resource-efficient MCP server builder with templates, customization, and memory optimization for edge and cloud deployment",
+  "author": "nsk",
+  "main": "index.js",
+  "icon": "🔧",
+  "category": "builder",
+  "tools": [
+    { "name": "mcp_list_templates", "description": "List available MCP server templates" },
+    { "name": "mcp_build", "description": "Build an MCP server from template with customizations" },
+    { "name": "mcp_build_prompt", "description": "Build an MCP server from natural language" },
+    { "name": "mcp_memory_estimate", "description": "Estimate memory usage for a template" }
+  ],
+  "prompts": [
+    { "name": "mcp_architect", "description": "Design an MCP server for a use case" }
+  ],
+  "resources": [
+    { "uri": "s-ai://mcp-builder/templates", "name": "MCP Templates", "description": "Built-in MCP server templates" }
+  ]
+}

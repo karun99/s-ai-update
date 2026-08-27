@@ -1,0 +1,8 @@
+node_modules/
+dist/
+.you-ai/
+.s-ai/
+*.log
+.opencode/
+.paul/
+build/dist/

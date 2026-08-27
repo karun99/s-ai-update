@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">S-AI Swarm</string>
+    <string name="title_activity_main">S-AI Swarm Intelligence</string>
+    <string name="package_name">com.sai.swarm</string>
+</resources>

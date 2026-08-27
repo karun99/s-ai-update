@@ -1,0 +1,48 @@
+[allowList]
+  description = "Global allowlist — false positives and test fixtures"
+  paths = [
+    '''dist/''',
+    '''node_modules/''',
+    '''build/dist/''',
+    '''\.min\.js$''',
+  ]
+
+[[rules]]
+  id = "test-fake-api-key"
+  description = "Test/example API key in fixture or test data"
+  regex = '''(?i)(test|example|fake|dummy|placeholder|xxx)[_\-]?api[_\-]?key[_\-]?=\s*['"]?[A-Za-z0-9\-_]{20,}'''
+  tags = ["test", "api-key"]
+
+[[rules]]
+  id = "test-fake-secret"
+  description = "Test/example secret in fixture or test data"
+  regex = '''(?i)(test|example|fake|dummy|placeholder|xxx)[_\-]?secret[_\-]?=\s*['"]?[A-Za-z0-9\-_]{20,}'''
+  tags = ["test", "secret"]
+
+[[rules]]
+  id = "generic-api-key-assignment"
+  description = "Generic API key in env-style assignment"
+  regex = '''(?i)(api[_\-]?key|apikey)\s*[=:]\s*['"]?[A-Za-z0-9\-_]{32,}'''
+  tags = ["api-key"]
+  [rules.allowlist]
+    paths = [
+      '''config\.default\.json$''',
+      '''\.env\.example$''',
+      '''test/''',
+      '''docs/''',
+    ]
+
+[[rules]]
+  id = "hardcoded-token"
+  description = "Hardcoded bearer/auth token"
+  regex = '''(?i)(bearer|auth|token)\s*[=:]\s*['"]?(s-ai-[A-Za-z0-9\-_]{20,}|ghp_[A-Za-z0-9]{36}|sk-[A-Za-z0-9]{32,})'''
+  tags = ["token", "auth"]
+  [rules.allowlist]
+    paths = [
+      '''src/security/auth\.ts$''',
+      '''test/''',
+    ]
+    regexes = [
+      '''s-ai-\{random\}''',
+      '''example''',
+    ]

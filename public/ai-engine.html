@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>S-AI Engine – Build AI Apps from Prompts</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root{--bg:#0d1117;--bg2:#161b22;--bg3:#0d1117;--text:#e6edf3;--muted:#8b949e;--accent:#58a6ff;--accent2:#79c0ff;--border:#30363d;--shadow:0 8px 32px rgba(0,0,0,.4);--radius:16px;--font:'Inter',sans-serif}
+        [data-theme="light"]{--bg:#f6f8fa;--bg2:#fff;--bg3:#f6f8fa;--text:#1f2328;--muted:#656d76;--accent:#0969da;--accent2:#0550ae;--border:#d0d7de;--shadow:0 8px 32px rgba(0,0,0,.08)}
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;transition:background .3s,color .3s}
+        .container{max-width:960px;margin:0 auto;padding:2rem 1.5rem}
+        header{display:flex;align-items:center;gap:12px;margin-bottom:2rem;flex-wrap:wrap}
+        header h1{font-size:1.6rem;font-weight:700}
+        header h1 .hl{color:var(--accent)}
+        header .badge{font-size:.7rem;background:var(--border);color:var(--muted);padding:3px 10px;border-radius:20px}
+        .theme-btn{margin-left:auto;background:transparent;border:1px solid var(--border);color:var(--muted);width:36px;height:36px;border-radius:50%;cursor:pointer;font-size:.9rem;transition:.2s}
+        .theme-btn:hover{background:var(--border);color:var(--text)}
+        .tabs{display:flex;gap:6px;margin-bottom:1.5rem;flex-wrap:wrap}
+        .tab{padding:8px 18px;border-radius:10px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;font:inherit;font-size:.85rem;font-weight:600;transition:.2s}
+        .tab.active,.tab:hover{background:var(--accent);color:#fff;border-color:var(--accent)}
+        .builder{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem;margin-bottom:1.5rem}
+        .builder label{display:block;font-size:.75rem;font-weight:600;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px}
+        .builder textarea{width:100%;min-height:100px;background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:.75rem;color:var(--text);font-family:var(--font);font-size:.9rem;resize:vertical;outline:none;transition:border .3s}
+        .builder textarea:focus{border-color:var(--accent)}
+        .builder .actions{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+        .btn{padding:10px 20px;border-radius:10px;border:none;font-weight:600;cursor:pointer;font:inherit;font-size:.85rem;transition:.2s}
+        .btn-primary{background:var(--accent);color:#fff}
+        .btn-primary:hover{background:var(--accent2)}
+        .btn-secondary{background:transparent;border:1px solid var(--border);color:var(--muted)}
+        .btn-secondary:hover{background:var(--border);color:var(--text)}
+        .btn:disabled{opacity:.4;cursor:not-allowed}
+        .results{margin-bottom:1.5rem}
+        .result-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;margin-bottom:12px;transition:.2s}
+        .result-card:hover{border-color:var(--accent)}
+        .result-card .meta{display:flex;gap:8px;align-items:center;margin-bottom:8px;flex-wrap:wrap}
+        .result-card .type{font-size:.65rem;padding:2px 8px;border-radius:6px;background:var(--accent);color:#fff;font-weight:700;text-transform:uppercase}
+        .result-card .name{font-weight:700}
+        .result-card .date{font-size:.7rem;color:var(--muted);margin-left:auto}
+        .result-card .preview{font-size:.8rem;color:var(--muted);line-height:1.5}
+        .result-card code{background:var(--bg3);padding:2px 6px;border-radius:4px;font-size:.75rem}
+        .result-card .btns{display:flex;gap:6px;margin-top:10px}
+        .empty{text-align:center;color:var(--muted);padding:3rem 1rem;font-size:.9rem}
+        .spinner{display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite}
+        @keyframes spin{to{transform:rotate(360deg)}}
+        .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.85);color:#fff;padding:8px 20px;border-radius:30px;font-size:14px;z-index:9999;backdrop-filter:blur(8px);transition:opacity .3s;opacity:0}
+        .toast.show{opacity:1}
+        @media(max-width:480px){.container{padding:1rem}.builder{padding:1rem}header h1{font-size:1.2rem}}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🚀 <span class="hl">S-AI</span> Engine</h1>
+            <span class="badge">Prompt-to-App Builder</span>
+            <button class="theme-btn" id="themeBtn" title="Toggle theme">🌓</button>
+        </header>
+
+        <div class="tabs" role="tablist">
+            <button class="tab active" data-type="app" role="tab">App</button>
+            <button class="tab" data-type="skill" role="tab">Skill</button>
+            <button class="tab" data-type="mcp" role="tab">MCP Server</button>
+            <button class="tab" data-type="swarm" role="tab">Swarm</button>
+        </div>
+
+        <div class="builder">
+            <label for="promptInput">Describe what you want to build</label>
+            <textarea id="promptInput" placeholder="e.g. Create a friendly medical assistant app with voice support and a blue accent color"></textarea>
+            <div class="actions">
+                <button class="btn btn-primary" id="buildBtn">Build</button>
+                <button class="btn btn-secondary" id="clearBtn">Clear</button>
+            </div>
+        </div>
+
+        <div class="results" id="results">
+            <div class="empty">No artifacts yet. Write a prompt and click Build.</div>
+        </div>
+    </div>
+
+    <script>
+    (function(){
+        'use strict';
+        let currentType = 'app';
+        let results = [];
+
+        const promptInput = document.getElementById('promptInput');
+        const buildBtn = document.getElementById('buildBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        const resultsEl = document.getElementById('results');
+        const themeBtn = document.getElementById('themeBtn');
+        const tabs = document.querySelectorAll('.tab');
+
+        themeBtn.addEventListener('click', () => {
+            const current = document.documentElement.getAttribute('data-theme');
+            document.documentElement.setAttribute('data-theme', current === 'light' ? 'dark' : 'light');
+        });
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                tabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                currentType = tab.dataset.type;
+            });
+        });
+
+        buildBtn.addEventListener('click', build);
+        clearBtn.addEventListener('click', () => { promptInput.value = ''; });
+        promptInput.addEventListener('keydown', e => { if (e.key === 'Enter' && e.ctrlKey) build(); });
+
+        async function build() {
+            const prompt = promptInput.value.trim();
+            if (!prompt) { toast('Enter a prompt first'); return; }
+            buildBtn.disabled = true;
+            buildBtn.innerHTML = '<span class="spinner"></span> Building...';
+            try {
+                const res = await fetch('/api/ai-engine/build', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ prompt, type: currentType })
+                });
+                if (!res.ok) throw new Error((await res.json().catch(()=>({}))).error || 'Build failed');
+                const output = await res.json();
+                results.unshift(output);
+                renderResults();
+                toast('✅ Built: ' + (output.definition?.brand?.name || output.definition?.name || 'artifact'));
+                promptInput.value = '';
+            } catch (err) {
+                toast('❌ ' + err.message);
+            } finally {
+                buildBtn.disabled = false;
+                buildBtn.textContent = 'Build';
+            }
+        }
+
+        async function loadExisting() {
+            try {
+                const res = await fetch('/api/ai-engine/list');
+                if (!res.ok) return;
+                const list = await res.json();
+                results = [];
+                for (const item of list) {
+                    try {
+                        const res2 = await fetch('/api/ai-engine/' + item.id);
+                        if (res2.ok) results.push(await res2.json());
+                    } catch {}
+                }
+                renderResults();
+            } catch {}
+        }
+
+        function renderResults() {
+            if (results.length === 0) {
+                resultsEl.innerHTML = '<div class="empty">No artifacts yet. Write a prompt and click Build.</div>';
+                return;
+            }
+            resultsEl.innerHTML = results.map(o => {
+                const type = o.id.split('_')[0];
+                const name = o.definition?.brand?.name || o.definition?.name || 'unknown';
+                const date = new Date(o.createdAt).toLocaleString();
+                let preview = '';
+                if (type === 'app' && o.html) preview = '<code>HTML: ' + o.html.length + ' bytes</code>';
+                else if (type === 'skill' && o.code) preview = '<code>Code: ' + o.code.length + ' bytes</code>';
+                else if (type === 'mcp' && o.code) preview = '<code>Tools: ' + (o.definition?.tools||[]).map(t=>t.name).join(', ') + '</code>';
+                else if (type === 'swarm' && o.config) preview = '<code>Agents: ' + (o.config.agents||[]).map(a=>a.id).join(', ') + '</code>';
+                return '<div class="result-card"><div class="meta"><span class="type">'+type+'</span><span class="name">'+name+'</span><span class="date">'+date+'</span></div><div class="preview">'+preview+'</div><div class="btns"><button class="btn btn-secondary" onclick="showDetail(\''+o.id+'\')">View</button></div></div>';
+            }).join('');
+        }
+
+        window.showDetail = function(id) {
+            const o = results.find(r => r.id === id);
+            if (!o) return;
+            if (o.html) {
+                const w = window.open('', '_blank');
+                w.document.write(o.html);
+                w.document.close();
+            } else {
+                const json = JSON.stringify(o, null, 2);
+                const w = window.open('', '_blank');
+                w.document.write('<pre style="padding:2rem;font-family:monospace;font-size:14px;white-space:pre-wrap">' + json.replace(/</g, '&lt;') + '</pre>');
+                w.document.close();
+            }
+        };
+
+        function toast(msg) {
+            const el = document.createElement('div');
+            el.className = 'toast';
+            el.textContent = msg;
+            document.body.appendChild(el);
+            requestAnimationFrame(() => el.classList.add('show'));
+            setTimeout(() => { el.classList.remove('show'); setTimeout(() => el.remove(), 400); }, 3000);
+        }
+
+        loadExisting();
+    })();
+    </script>
+</body>
+</html>

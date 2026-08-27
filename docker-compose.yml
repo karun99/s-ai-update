@@ -1,0 +1,52 @@
+services:
+  s-ai:
+    build: .
+    image: s-ai:latest
+    container_name: s-ai
+    restart: unless-stopped
+    ports:
+      - "${SAI_PORT:-3000}:3000"
+    environment:
+      PORT: 3000
+
+      # --- AI providers (set values in a .env file next to this compose file) ---
+      SAI_PRIMARY_PROVIDER: "${SAI_PRIMARY_PROVIDER:-openrouter}"
+      OPENROUTER_API_KEY: "${OPENROUTER_API_KEY:-}"
+      OPENAI_API_KEY: "${OPENAI_API_KEY:-}"
+      ANTHROPIC_API_KEY: "${ANTHROPIC_API_KEY:-}"
+      GOOGLE_API_KEY: "${GOOGLE_API_KEY:-}"
+      NVIDIA_API_KEY: "${NVIDIA_API_KEY:-}"
+      COHERE_API_KEY: "${COHERE_API_KEY:-}"
+      GROK_API_KEY: "${GROK_API_KEY:-}"
+      KIMI_API_KEY: "${KIMI_API_KEY:-}"
+      TOGETHER_API_KEY: "${TOGETHER_API_KEY:-}"
+      FIREWORKS_API_KEY: "${FIREWORKS_API_KEY:-}"
+      PI_API_KEY: "${PI_API_KEY:-}"
+
+      # --- Bhashini multilingual AI ---
+      BHASHINI_API_KEY: "${BHASHINI_API_KEY:-}"
+      BHASHINI_USER_ID: "${BHASHINI_USER_ID:-s-ai-user}"
+      BHASHINI_PIPELINE_ID: "${BHASHINI_PIPELINE_ID:-}"
+
+      # --- Local providers (Ollama, KoboldCPP, ...) running on the host ---
+      OLLAMA_BASE_URL: "${OLLAMA_BASE_URL:-http://host.docker.internal:11434}"
+
+    # Lets the container reach services running on the Docker host
+    # (required for the OLLAMA_BASE_URL default above on Linux).
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+    volumes:
+      - s-ai-data:/root/.s-ai      # knowledge graph, cache, ai-engine, personas
+      - s-ai-config:/app/.s-ai     # config.json written by `s-ai setup` / `s-ai config set`
+
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+
+volumes:
+  s-ai-data:
+  s-ai-config:

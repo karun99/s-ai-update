@@ -1,0 +1,30 @@
+{
+  "name": "base",
+  "version": "1.0.0",
+  "description": "Base skills for S-AI memory and knowledge management",
+  "author": "nsk",
+  "main": "index.js",
+  "tools": [
+    {
+      "name": "memory_search",
+      "description": "Search the knowledge graph for relevant information"
+    },
+    {
+      "name": "knowledge_add",
+      "description": "Add new knowledge to the knowledge base"
+    }
+  ],
+  "prompts": [
+    {
+      "name": "reflect",
+      "description": "Reflect on a topic or past conversation"
+    }
+  ],
+  "resources": [
+    {
+      "uri": "youai://base/commands",
+      "name": "Available Commands",
+      "description": "List of available CLI commands"
+    }
+  ]
+}

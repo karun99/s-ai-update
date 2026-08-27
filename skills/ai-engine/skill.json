@@ -1,0 +1,23 @@
+{
+  "name": "ai-engine",
+  "version": "2.0.0",
+  "description": "Prompt-to-App builder: Create your own AI skills, MCP servers, and multi-agent swarms from natural language",
+  "author": "nsk",
+  "main": "index.js",
+  "icon": "🤖",
+  "category": "builder",
+  "tools": [
+    { "name": "build_app", "description": "Generate a complete AI app from a text prompt" },
+    { "name": "build_skill", "description": "Generate a new S-AI skill from a description" },
+    { "name": "build_mcp_server", "description": "Generate an MCP server from a description" },
+    { "name": "build_swarm", "description": "Generate a multi-agent swarm configuration" },
+    { "name": "validate_config", "description": "Validate an app/skill/MCP configuration JSON" }
+  ],
+  "prompts": [
+    { "name": "app_builder", "description": "Guide through building an AI app" },
+    { "name": "swarm_architect", "description": "Design a multi-agent swarm" }
+  ],
+  "resources": [
+    { "uri": "s-ai://ai-engine/templates", "name": "App Templates", "description": "Built-in app templates" }
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "name": "@saikarun/openworker",
+  "version": "0.1.0",
+  "description": "OpenWorker Suite — self-hosted AI coworker harness for the S-AI engine. Jobs, policies, reach v2 registry, vault, SOI (simulated organoid intelligence), installers.",
+  "type": "module",
+  "main": "./dist/cli.js",
+  "types": "./dist/cli.d.ts",
+  "bin": {
+    "openworker": "bin/openworker.js"
+  },
+  "scripts": {
+    "build": "node scripts/tsc.mjs -p tsconfig.json",
+    "validate": "node scripts/tsc.mjs -p tsconfig.json --noEmit",
+    "test": "npm run build && node --test test/",
+    "security:validate": "node scripts/validate-security.mjs",
+    "pretest": "npm run validate"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "keywords": [
+    "ai",
+    "agent",
+    "openworker",
+    "s-ai",
+    "swarm",
+    "jobs",
+    "soi",
+    "reach",
+    "vault",
+    "aisuite-style-routing"
+  ],
+  "author": "nsk",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nsk/s-ai.git",
+    "directory": "suite"
+  }
+}

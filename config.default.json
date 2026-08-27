@@ -1,0 +1,190 @@
+{
+  "$schema": "https://s-ai.app/schema/config.json",
+  "version": "6.1.0",
+  "swarm": {
+    "maxAgents": 6,
+    "consensusThreshold": 0.7,
+    "maxRounds": 3,
+    "timeout": 120000,
+    "biasReduction": true
+  },
+  "providers": {
+    "primary": "openrouter",
+    "fallback": "ollama",
+    "openrouter": {
+      "apiKey": "",
+      "baseUrl": "https://openrouter.ai/api/v1",
+      "defaultModel": "mistralai/mistral-7b-instruct:free"
+    },
+    "openai": {
+      "apiKey": "",
+      "baseUrl": "https://api.openai.com/v1",
+      "defaultModel": "gpt-4o-mini"
+    },
+    "anthropic": {
+      "apiKey": "",
+      "baseUrl": "https://api.anthropic.com",
+      "defaultModel": "claude-sonnet-4-20250514"
+    },
+    "google": {
+      "apiKey": "",
+      "baseUrl": "https://generativelanguage.googleapis.com",
+      "defaultModel": "gemini-2.0-flash"
+    },
+    "ollama": {
+      "baseUrl": "http://localhost:11434",
+      "defaultModel": "llama3.2"
+    },
+    "nvidia": {
+      "apiKey": "",
+      "baseUrl": "https://integrate.api.nvidia.com/v1",
+      "defaultModel": "nvidia/llama-3.1-nemotron-70b-instruct"
+    },
+    "aws-bedrock": {
+      "region": "us-east-1",
+      "accessKeyId": "",
+      "secretAccessKey": "",
+      "sessionToken": "",
+      "defaultModel": "anthropic.claude-3-5-sonnet-20240620-v1:0"
+    },
+    "claude-aws": {
+      "apiKey": "",
+      "baseUrl": "https://api.aws.anthropic.com",
+      "defaultModel": "claude-sonnet-4-20250514"
+    },
+    "vertex-ai": {
+      "projectId": "",
+      "region": "us-east5",
+      "accessToken": "",
+      "defaultModel": "claude-sonnet-4-20250514"
+    },
+    "foundry": {
+      "resource": "",
+      "apiKey": "",
+      "useEntraId": false,
+      "defaultModel": "claude-sonnet-4-6"
+    },
+    "openai-compatible": {
+      "apiKey": "",
+      "baseUrl": "",
+      "defaultModel": ""
+    },
+    "koboldcpp": {
+      "baseUrl": "http://localhost:5001",
+      "defaultModel": ""
+    },
+    "oobabooga": {
+      "baseUrl": "http://localhost:5000",
+      "defaultModel": ""
+    },
+    "mlc-llm": {
+      "baseUrl": "http://localhost:8080",
+      "defaultModel": "vicuna-7b-v1.5"
+    },
+    "pi": {
+      "apiKey": "",
+      "baseUrl": "https://api.inflection.ai",
+      "defaultModel": "pi-0"
+    },
+    "cohere": {
+      "apiKey": "",
+      "baseUrl": "https://api.cohere.com",
+      "defaultModel": "command-r-plus"
+    },
+    "grok": {
+      "apiKey": "",
+      "baseUrl": "https://api.x.ai",
+      "defaultModel": "grok-2"
+    },
+    "kimi": {
+      "apiKey": "",
+      "baseUrl": "https://api.moonshot.cn",
+      "defaultModel": "moonshot-v1-128k"
+    },
+    "together": {
+      "apiKey": "",
+      "baseUrl": "https://api.together.xyz",
+      "defaultModel": "meta-llama/Meta-Llama-3.1-70B-Instruct-Turbo"
+    },
+    "fireworks": {
+      "apiKey": "",
+      "baseUrl": "https://api.fireworks.ai",
+      "defaultModel": "accounts/fireworks/models/llama-v3p1-70b-instruct"
+    },
+    "bhashini": {
+      "apiKey": "",
+      "userId": "s-ai-user",
+      "pipelineId": ""
+    }
+  },
+  "crawl4ai": {
+    "enabled": true,
+    "method": "playwright",
+    "maxPages": 5,
+    "respectRobotsTxt": true,
+    "delayBetweenRequests": 1000,
+    "contentMaxTokens": 8000,
+    "cacheEnabled": true,
+    "cacheTTL": 3600000
+  },
+  "memory": {
+    "backend": "graph",
+    "maxNodes": 10000,
+    "compressionThreshold": 5000,
+    "autoArchive": true
+  },
+  "neuralMap": {
+    "enabled": true,
+    "maxHistory": 50,
+    "autoProfile": false,
+    "persistAcrossSessions": true
+  },
+  "mcp": {
+    "enabled": true,
+    "transport": "stdio",
+    "servers": []
+  },
+  "security": {
+    "auth": {
+      "mode": "local",
+      "description": "local: auto-token for localhost, lan: token required, off: no auth"
+    },
+    "ssrf": {
+      "maxRedirects": 5,
+      "maxResponseBytes": 10485760,
+      "timeout": 30000
+    },
+    "filesystem": {
+      "workspaceRoot": "~/.s-ai/workspace",
+      "denyPatterns": [
+        "**/.ssh/**",
+        "**/.aws/**",
+        "**/.config/**",
+        "**/.gnupg/**",
+        "**/.env",
+        "**/.env.*",
+        "**/credentials",
+        "**/secrets",
+        "**/*.key",
+        "**/*.pem"
+      ]
+    },
+    "shell": {
+      "mode": "safe",
+      "description": "safe: block dangerous commands, restricted: allowlist, developer: expanded, full: unrestricted"
+    },
+    "audit": {
+      "enabled": true,
+      "redactSensitive": true,
+      "maxLogSizeMB": 100
+    }
+  },
+  "server": {
+    "port": 3000,
+    "host": "localhost"
+  },
+  "ui": {
+    "theme": "dark",
+    "accentColor": "#58a6ff"
+  }
+}

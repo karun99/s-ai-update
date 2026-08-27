@@ -1,0 +1,193 @@
+{
+  "name": "@saikarun/s-ai",
+  "version": "6.1.0",
+  "description": "Multi-agent swarm intelligence with neural mapping, research mapper (Paperscape-style arXiv visualization), Bhashini multilingual AI, crawl4ai, MCP, and bias-reduced consensus. 20+ AI providers.",
+  "type": "module",
+  "main": "./dist/src/index.js",
+  "types": "./dist/src/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/src/index.d.ts",
+      "import": "./dist/src/index.js"
+    },
+    "./config": {
+      "types": "./dist/src/config.d.ts",
+      "import": "./dist/src/config.js"
+    },
+    "./providers": {
+      "types": "./dist/src/providers/index.d.ts",
+      "import": "./dist/src/providers/index.js"
+    },
+    "./swarm": {
+      "types": "./dist/src/swarm/index.d.ts",
+      "import": "./dist/src/swarm/index.js"
+    },
+    "./agent": {
+      "types": "./dist/src/swarm/agent.d.ts",
+      "import": "./dist/src/swarm/agent.js"
+    },
+    "./graph": {
+      "types": "./dist/src/memory/graph.d.ts",
+      "import": "./dist/src/memory/graph.js"
+    },
+    "./crawl": {
+      "types": "./dist/src/tools/crawl.d.ts",
+      "import": "./dist/src/tools/crawl.js"
+    },
+    "./mcp": {
+      "types": "./dist/src/mcp/server.d.ts",
+      "import": "./dist/src/mcp/server.js"
+    },
+    "./mcp/client": {
+      "types": "./dist/src/mcp/client.d.ts",
+      "import": "./dist/src/mcp/client.js"
+    },
+    "./tools": {
+      "types": "./dist/src/tools/index.d.ts",
+      "import": "./dist/src/tools/index.js"
+    },
+    "./neural": {
+      "types": "./dist/src/neural/index.d.ts",
+      "import": "./dist/src/neural/index.js"
+    },
+    "./arxiv": {
+      "types": "./dist/src/tools/arxiv.d.ts",
+      "import": "./dist/src/tools/arxiv.js"
+    },
+    "./bhashini": {
+      "types": "./dist/src/providers/bhashini.d.ts",
+      "import": "./dist/src/providers/bhashini.js"
+    },
+    "./bhashini/tools": {
+      "types": "./dist/src/tools/bhashini-tool.d.ts",
+      "import": "./dist/src/tools/bhashini-tool.js"
+    },
+    "./execution": {
+      "types": "./dist/src/execution/index.d.ts",
+      "import": "./dist/src/execution/index.js"
+    },
+    "./execution/types": {
+      "types": "./dist/src/execution/types.d.ts",
+      "import": "./dist/src/execution/types.js"
+    },
+    "./execution/registry": {
+      "types": "./dist/src/execution/registry.d.ts",
+      "import": "./dist/src/execution/registry.js"
+    },
+    "./security": {
+      "types": "./dist/src/security/index.d.ts",
+      "import": "./dist/src/security/index.js"
+    },
+    "./security/auth": {
+      "types": "./dist/src/security/auth.d.ts",
+      "import": "./dist/src/security/auth.js"
+    },
+    "./security/ssrf": {
+      "types": "./dist/src/security/ssrf.d.ts",
+      "import": "./dist/src/security/ssrf.js"
+    },
+    "./security/sandbox": {
+      "types": "./dist/src/security/sandbox.d.ts",
+      "import": "./dist/src/security/sandbox.js"
+    }
+  },
+  "bin": {
+    "s-ai": "bin/you-ai.js",
+    "s-ai-mcp": "bin/mcp-stdio.js"
+  },
+  "scripts": {
+    "build": "node node_modules/typescript/bin/tsc",
+    "build:exe": "bash build/scripts/build-exe.sh",
+    "build:msi": "bash build/scripts/build-msi.sh",
+    "build:apk": "bash build/scripts/build-apk.sh",
+    "build:docker": "bash build/scripts/build-docker.sh",
+    "build:all": "bash build/scripts/build-all.sh",
+    "start": "node bin/you-ai.js serve",
+    "dev": "node --watch bin/you-ai.js serve",
+    "mcp": "node bin/mcp-stdio.js",
+    "lint": "eslint src/ bin/ skills/",
+    "lint:fix": "eslint src/ bin/ skills/ --fix",
+    "test": "node --test test/**/*.test.js",
+    "test:coverage": "node --test --experimental-test-coverage test/**/*.test.js",
+    "validate": "node node_modules/typescript/bin/tsc --noEmit && echo '✓ TypeScript valid'",
+    "pretest": "npm run build && npm run validate",
+    "prepare": "node -e \"require('fs').existsSync('dist/src/index.js') || require('child_process').execSync('npm run build', { stdio: 'inherit' })\"",
+    "prepack": "node -e \"require('fs').existsSync('dist/src/index.js') || (console.error('Missing dist/ — run build first'), process.exit(1))\"",
+    "postinstall": "node -e \"const fs=require('fs'); if (!fs.existsSync('dist/src/index.js')) { console.log('  Building S-AI from source...'); require('child_process').execSync('npm run build', { stdio: 'inherit' }); } console.log('  S-AI v6.1.0 installed. Run: s-ai setup')\""
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "keywords": [
+    "ai",
+    "multi-agent",
+    "swarm",
+    "neural-mapping",
+    "digital-twin",
+    "persona",
+    "mcp",
+    "crawl4ai",
+    "orchestrator",
+    "bias-reduction",
+    "consensus",
+    "openrouter",
+    "anthropic",
+    "openai",
+    "google",
+    "ollama",
+    "nvidia",
+    "personal-assistant",
+    "knowledge-graph",
+    "npx",
+    "llm",
+    "agent",
+    "llm-agents",
+    "ai-agents",
+    "multi-perspective",
+    "research-mapper",
+    "paperscape",
+    "arxiv",
+    "citation-graph",
+    "force-directed-graph",
+    "bhashini",
+    "multilingual",
+    "indic-languages",
+    "translation",
+    "text-to-speech",
+    "speech-to-text",
+    "indian-languages"
+  ],
+  "author": "nsk",
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.12.0",
+    "express": "^4.21.0",
+    "zod": "^3.24.0"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.6",
+    "@types/node": "^26.1.1",
+    "eslint": "^9.0.0",
+    "typescript": "^7.0.2"
+  },
+  "optionalDependencies": {
+    "playwright": "^1.50.0"
+  },
+  "files": [
+    "bin/",
+    "dist/",
+    "public/",
+    "skills/",
+    "config.default.json",
+    "README.md",
+    "LICENSE"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nsk/s-ai.git"
+  },
+  "bugs": {
+    "url": "https://github.com/nsk/s-ai/issues"
+  },
+  "homepage": "https://github.com/nsk/s-ai#readme"
+}

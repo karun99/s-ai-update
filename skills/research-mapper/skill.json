@@ -1,0 +1,40 @@
+{
+  "name": "research-mapper",
+  "version": "1.0.0",
+  "description": "Research Mapper — Paperscape-style arXiv paper search, citation graph builder, and research trend analysis",
+  "author": "nsk",
+  "main": "index.js",
+  "icon": "🔬",
+  "category": "research",
+  "tools": [
+    {
+      "name": "search_papers",
+      "description": "Search arXiv for research papers by query, category, or author. Returns structured paper data with titles, authors, abstracts, and citation graph."
+    },
+    {
+      "name": "build_graph",
+      "description": "Build a citation graph from a list of arXiv paper IDs. Returns nodes and edges for Paperscape-style visualization."
+    },
+    {
+      "name": "get_paper",
+      "description": "Fetch detailed information about a specific arXiv paper by its ID."
+    },
+    {
+      "name": "list_categories",
+      "description": "List popular arXiv research categories with descriptions."
+    }
+  ],
+  "prompts": [
+    {
+      "name": "research_topic",
+      "description": "Guide the user through exploring a research topic on arXiv"
+    }
+  ],
+  "resources": [
+    {
+      "uri": "s-ai://research-mapper/categories",
+      "name": "arXiv Categories",
+      "description": "List of arXiv research categories for filtering searches"
+    }
+  ]
+}

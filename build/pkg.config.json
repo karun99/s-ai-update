@@ -1,0 +1,29 @@
+{
+  "name": "s-ai",
+  "version": "5.1.0",
+  "description": "S-AI Multi-Agent Swarm Intelligence",
+  "bin": "bin/you-ai.js",
+  "output": "build/dist",
+  "targets": [
+    "node18-win-x64",
+    "node18-linux-x64",
+    "node18-linux-arm64",
+    "node18-macos-x64",
+    "node18-macos-arm64"
+  ],
+  "assets": [
+    "dist/**/*",
+    "public/**/*",
+    "skills/**/*",
+    "config.default.json"
+  ],
+  "scripts": [
+    "bin/you-ai.js"
+  ],
+  "压缩": false,
+  "options": {
+    "compression": "Brotli",
+    "maxMemory": "512",
+    "experimental-worker": false
+  }
+}

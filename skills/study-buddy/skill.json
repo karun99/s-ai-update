@@ -1,0 +1,49 @@
+{
+  "name": "study-buddy",
+  "version": "1.0.0",
+  "description": "Study Buddy — AI-powered tutoring with quiz generation, knowledge base management, multi-mode mentoring (homework, career, resume, references, pitch), and gamified learning",
+  "author": "nsk",
+  "main": "index.js",
+  "icon": "📚",
+  "category": "education",
+  "tools": [
+    {
+      "name": "generate_quiz",
+      "description": "Generate a quiz question from a knowledge base. Tracks progress and avoids repetition."
+    },
+    {
+      "name": "check_answer",
+      "description": "Check if a user answer is correct and provide feedback."
+    },
+    {
+      "name": "get_evolution",
+      "description": "Get the study buddy evolution stage (avatar, name, title) based on user level."
+    },
+    {
+      "name": "format_references",
+      "description": "Format academic references in APA, MLA, or Chicago citation style."
+    },
+    {
+      "name": "generate_pitch",
+      "description": "Generate a structured project pitch with Problem, Solution, Features, Audience, and Impact."
+    }
+  ],
+  "prompts": [
+    {
+      "name": "study_session",
+      "description": "Start a study session in Teach, Homework, Explain, Career, Resume, References, or Pitch mode"
+    }
+  ],
+  "resources": [
+    {
+      "uri": "s-ai://study-buddy/topics",
+      "name": "Study Topics",
+      "description": "Available study topics and evolution levels"
+    },
+    {
+      "uri": "s-ai://study-buddy/mentor-modes",
+      "name": "Mentor Modes",
+      "description": "Available mentor modes with system prompts"
+    }
+  ]
+}

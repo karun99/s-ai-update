@@ -1,0 +1,36 @@
+{
+  "name": "ai-studio",
+  "version": "1.0.0",
+  "description": "AI Video Generator — generate videos from a rough idea using OpenRouter, NVIDIA AI, and FFmpeg",
+  "author": "nsk",
+  "main": "index.js",
+  "icon": "🎬",
+  "category": "media",
+  "tools": [
+    {
+      "name": "generate_video",
+      "description": "Generate a video from a rough text idea. Refines the prompt with OpenRouter, generates video with NVIDIA AI, and optionally processes with FFmpeg"
+    },
+    {
+      "name": "refine_prompt",
+      "description": "Refine a rough video idea into a detailed prompt using OpenRouter LLM"
+    },
+    {
+      "name": "add_title_overlay",
+      "description": "Add a title text overlay to a video using FFmpeg WASM (client-side)"
+    }
+  ],
+  "prompts": [
+    {
+      "name": "video_idea",
+      "description": "Guide the user through describing their video idea for generation"
+    }
+  ],
+  "resources": [
+    {
+      "uri": "s-ai://ai-studio/templates",
+      "name": "Video Templates",
+      "description": "Pre-built video generation prompt templates"
+    }
+  ]
+}
