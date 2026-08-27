@@ -6,6 +6,7 @@ on:
     tags: ['v*']
   pull_request:
     branches: [main]
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -32,20 +33,25 @@ jobs:
   # ── Native Executables (pkg) ───────────────────────────────────────
   executables:
     needs: compile
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         include:
           - target: node18-win-x64
             output: windows/s-ai.exe
+            os: ubuntu-latest
           - target: node18-linux-x64
             output: linux-x64/s-ai
+            os: ubuntu-latest
           - target: node18-linux-arm64
             output: linux-arm64/s-ai
+            os: ubuntu-latest
           - target: node18-macos-x64
             output: macos-x64/s-ai
+            os: macos-13
           - target: node18-macos-arm64
             output: macos-arm64/s-ai
+            os: macos-14
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -102,10 +108,14 @@ jobs:
         with:
           distribution: temurin
           java-version: 17
-      - uses: actions/setup-android@v2
+          cache: gradle
+      - uses: android-actions/setup-android@v3
         with:
-          api-level: 34
-          build-tools: 34.0.0
+          packages: 'platform-tools platforms;android-34 build-tools;34.0.0'
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: "8.10"
       - run: npm ci --omit=dev
       - uses: actions/download-artifact@v4
         with:
@@ -120,9 +130,12 @@ jobs:
           cp package.json build/android/app/src/main/assets/www/
       - name: Build APK
         working-directory: build/android
+        continue-on-error: true
         run: |
-          chmod +x gradlew 2>/dev/null || true
-          ./gradlew assembleDebug 2>/dev/null || echo "Gradle build requires Capacitor init first"
+          cat > local.properties <<EOF
+          sdk.dir=$ANDROID_SDK_ROOT
+          EOF
+          gradle --no-daemon assembleDebug 2>/dev/null || echo "Gradle build requires Capacitor init first"
       - uses: actions/upload-artifact@v4
         if: always()
         with:
