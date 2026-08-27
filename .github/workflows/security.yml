@@ -23,10 +23,10 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - uses: gitleaks/gitleaks-action@v2
+      - name: Run gitleaks
+        uses: gitleaks/gitleaks-action@v2.7.5
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE }}
 
   # ── OSV-Scanner (known vulnerabilities) ──────────────────────────
   osv-scanner:
@@ -35,7 +35,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Run osv-scanner
-        uses: google/osv-scanner-action/osv-scanner-action@v2
+        uses: google/osv-scanner-action/osv-scanner-action@v2.5.1
         with:
           scan-args: |-
             --format table
@@ -100,7 +100,7 @@ jobs:
         with:
           node-version: 22
           cache: npm
-      - run: npm ci
+      - run: npm ci --ignore-scripts
       - name: npm audit (production)
         run: npm audit --omit=dev --audit-level=high
         continue-on-error: true
@@ -117,27 +117,31 @@ jobs:
         with:
           node-version: 22
           cache: npm
-      - run: npm ci
-      - name: Check for production dependencies with copyleft licenses
+      - run: npm ci --ignore-scripts
+      - name: Check for copyleft licenses in production dependencies
         run: |
-          echo "Checking for GPL/AGPL/SSPL licenses in production dependencies..."
+          echo "Checking for GPL/AGPL/SSPL/MPL licenses in production dependencies..."
           FAIL=0
-          for pkg in $(node -e "
-            const fs = require('fs');
-            const p = JSON.parse(fs.readFileSync('node_modules/@anthropic-ai/sdk/package.json','utf8'));
-            // Just list top-level prod deps
-            const pkg = JSON.parse(fs.readFileSync('package.json','utf8'));
+          node -e '
+            const fs = require("fs");
+            const pkg = JSON.parse(fs.readFileSync("package.json", "utf8"));
             const deps = Object.keys(pkg.dependencies || {});
-            deps.forEach(d => console.log(d));
-          " 2>/dev/null || true); do
-            LICENSE_FILE="node_modules/$pkg/LICENSE" 
-            if [ -f "$LICENSE_FILE" ]; then
-              if grep -qiE "GPL|AGPL|SSPL" "$LICENSE_FILE" 2>/dev/null; then
-                echo "  WARNING: $pkg has a copyleft license"
-                FAIL=1
-              fi
-            fi
-          done
+            const copyleft = ["GPL", "AGPL", "SSPL", "MPL", "LGPL", "EPL"];
+            for (const d of deps) {
+              try {
+                const dir = "node_modules/" + d.replace("/", "/");
+                const p = JSON.parse(fs.readFileSync(dir + "/package.json", "utf8"));
+                const lic = (p.license || "");
+                for (const c of copyleft) {
+                  if (lic.toUpperCase().includes(c)) {
+                    console.log("  WARNING: " + d + " uses " + lic);
+                    process.exitCode = 1;
+                  }
+                }
+              } catch { /* missing/private */ }
+            }
+            console.log("  License scan complete");
+          ' || FAIL=1
           if [ "$FAIL" -eq 1 ]; then
             echo "::warning::Copyleft licenses detected in production dependencies"
           else
@@ -154,13 +158,12 @@ jobs:
         with:
           node-version: 22
           cache: npm
-      - run: npm ci
-      - name: TypeScript compile check
+      - run: npm ci --ignore-scripts
+      - name: Build TypeScript
         run: npx tsc --noEmit
-      - name: Run tests
+      - name: Build & run security tests
         run: |
-          npm run build 2>/dev/null || true
-          npx tsc -p tsconfig.test.json 2>/dev/null || true
+          npx tsc -p tsconfig.test.json
           node --test dist/test/security/*.test.js
 
   # ── Summary ─────────────────────────────────────────────────────
