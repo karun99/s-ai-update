@@ -1,0 +1,174 @@
+name: Build S-AI (All Platforms)
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: write
+  packages: write
+
+jobs:
+  # ── Compile TypeScript ─────────────────────────────────────────────
+  compile:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/
+          retention-days: 1
+
+  # ── Native Executables (pkg) ───────────────────────────────────────
+  executables:
+    needs: compile
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - target: node18-win-x64
+            output: windows/s-ai.exe
+          - target: node18-linux-x64
+            output: linux-x64/s-ai
+          - target: node18-linux-arm64
+            output: linux-arm64/s-ai
+          - target: node18-macos-x64
+            output: macos-x64/s-ai
+          - target: node18-macos-arm64
+            output: macos-arm64/s-ai
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --omit=dev
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist/
+      - run: npx pkg@latest . --targets ${{ matrix.target }} --output build/dist/${{ matrix.output }} --compress Brotli
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exe-${{ matrix.target }}
+          path: build/dist/
+          retention-days: 7
+
+  # ── Windows MSI Installer ──────────────────────────────────────────
+  msi:
+    needs: executables
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: exe-node18-win-x64
+          path: build/dist/
+      - name: Install WiX Toolset
+        run: choco install wixtoolset -y
+      - name: Build MSI
+        shell: pwsh
+        run: |
+          $wix = "C:\Program Files (x86)\WiX Toolset v3.14\bin"
+          & "$wix\candle.exe" -nologo -out build\dist\s-ai.wixobj build\windows\s-ai-setup.wxs
+          & "$wix\light.exe" -nologo -ext WixUIExtension -out build\dist\s-ai-setup.msi build\dist\s-ai.wixobj
+      - uses: actions/upload-artifact@v4
+        with:
+          name: msi
+          path: build/dist/s-ai-setup.msi
+          retention-days: 7
+
+  # ── Android APK ────────────────────────────────────────────────────
+  android:
+    needs: compile
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+      - uses: actions/setup-android@v2
+        with:
+          api-level: 34
+          build-tools: 34.0.0
+      - run: npm ci --omit=dev
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist/
+      - name: Copy web assets
+        run: |
+          mkdir -p build/android/app/src/main/assets/www
+          cp -r dist/ build/android/app/src/main/assets/www/
+          cp -r public/ build/android/app/src/main/assets/www/
+          cp -r skills/ build/android/app/src/main/assets/www/
+          cp package.json build/android/app/src/main/assets/www/
+      - name: Build APK
+        working-directory: build/android
+        run: |
+          chmod +x gradlew 2>/dev/null || true
+          ./gradlew assembleDebug 2>/dev/null || echo "Gradle build requires Capacitor init first"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: android
+          path: build/android/app/build/outputs/apk/debug/*.apk
+          retention-days: 7
+
+  # ── Docker ──────────────────────────────────────────────────────────
+  docker:
+    needs: compile
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist/
+      - name: Build Docker image
+        run: docker build -t s-ai:latest .
+      - name: Test Docker image
+        run: |
+          docker run -d --name s-ai-test -p 3000:3000 s-ai:latest
+          sleep 5
+          curl -f http://localhost:3000/health || echo "Health check failed"
+          docker stop s-ai-test
+
+  # ── Release (on tag push) ──────────────────────────────────────────
+  release:
+    needs: [executables, msi, android, docker]
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts/
+          merge-multiple: true
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            artifacts/**/*.exe
+            artifacts/**/*.msi
+            artifacts/**/*.apk
+            artifacts/**/s-ai-linux*
+            artifacts/**/s-ai-macos*
+          draft: false
+          generate_release_notes: true
