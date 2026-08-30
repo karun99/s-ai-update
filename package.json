@@ -105,10 +105,10 @@
     "start": "node bin/you-ai.js serve",
     "dev": "node --watch bin/you-ai.js serve",
     "mcp": "node bin/mcp-stdio.js",
-    "lint": "eslint src/ bin/ skills/",
-    "lint:fix": "eslint src/ bin/ skills/ --fix",
-    "test": "node --test test/**/*.test.js",
-    "test:coverage": "node --test --experimental-test-coverage test/**/*.test.js",
+    "lint": "eslint \"bin/**/*.js\"",
+    "lint:fix": "eslint \"bin/**/*.js\" --fix",
+    "test": "node --test dist/test/**/*.test.js",
+    "test:coverage": "node --test --experimental-test-coverage dist/test/**/*.test.js",
     "validate": "node node_modules/typescript/bin/tsc --noEmit && echo '✓ TypeScript valid'",
     "pretest": "npm run build && npm run validate",
     "prepare": "node -e \"require('fs').existsSync('dist/src/index.js') || require('child_process').execSync('npm run build', { stdio: 'inherit' })\"",
@@ -184,10 +184,10 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/nsk/s-ai.git"
+    "url": "git+https://github.com/karun99/s-ai-update.git"
   },
   "bugs": {
-    "url": "https://github.com/nsk/s-ai/issues"
+    "url": "https://github.com/karun99/s-ai-update/issues"
   },
-  "homepage": "https://github.com/nsk/s-ai#readme"
+  "homepage": "https://github.com/karun99/s-ai-update#readme"
 }

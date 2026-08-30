@@ -58,23 +58,23 @@ The full OpenWorker harness lives in [`suite/`](suite/) and integrates directly 
 
 | Platform | Architecture | Min RAM | Install Method | Status |
 |----------|-------------|---------|----------------|--------|
-| **Windows** | x64 | 256 MB | [Standalone .exe](#windows-exe) / [MSI Installer](#windows-msi) / npm | ✅ |
-| **Windows** | ARM64 | 256 MB | npm / standalone .exe | ✅ |
-| **macOS** | Intel (x64) | 256 MB | [Standalone binary](#macos) / npm | ✅ |
-| **macOS** | Apple Silicon (ARM64) | 256 MB | [Standalone binary](#macos) / npm | ✅ |
-| **Linux** | x64 | 256 MB | [Standalone binary](#linux) / npm / Docker | ✅ |
-| **Linux** | ARM64 | 256 MB | [Standalone binary](#linux-arm64) / npm | ✅ |
-| **Linux** | ARMv7 (RPi 3/4/5) | 512 MB | npm | ✅ |
-| **Android** | ARM64 | 512 MB | [APK](#android) / [Termux](#android-termux) / PWA | ✅ |
-| **Docker** | x64 / ARM64 | 512 MB | [Docker Compose](#docker) | ✅ |
-| **Raspberry Pi** | ARM64 / ARMv7 | 512 MB | npm / standalone binary | ✅ |
-| **Chrome OS** | x64 / ARM64 | 512 MB | Linux (Crostini) / PWA | ✅ |
+| **Windows** | x64 | 2 GB | [Standalone .exe](#windows-exe) / [MSI Installer](#windows-msi) / npm | ✅ |
+| **Windows** | ARM64 | 2 GB | npm / standalone .exe | ✅ |
+| **macOS** | Intel (x64) | 2 GB | [Standalone binary](#macos) / npm | ✅ |
+| **macOS** | Apple Silicon (ARM64) | 2 GB | [Standalone binary](#macos) / npm | ✅ |
+| **Linux** | x64 | 2 GB | [Standalone binary](#linux) / npm / Docker | ✅ |
+| **Linux** | ARM64 | 2 GB | [Standalone binary](#linux-arm64) / npm | ✅ |
+| **Linux** | ARMv7 (RPi 3/4/5) | 2 GB | npm | ✅ |
+| **Android** | ARM64 | 2 GB | [APK](#android) / [Termux](#android-termux) / PWA | ✅ |
+| **Docker** | x64 / ARM64 | 2 GB | [Docker Compose](#docker) | ✅ |
+| **Raspberry Pi** | ARM64 / ARMv7 | 2 GB | npm / standalone binary | ✅ |
+| **Chrome OS** | x64 / ARM64 | 2 GB | Linux (Crostini) / PWA | ✅ |
 | **Any browser** | any | — | [PWA (home-screen install)](#pwa) | ✅ |
 
 ### Minimum Requirements
 
 - **CPU:** Any 64-bit processor (ARM or x86). 32-bit systems not supported.
-- **RAM:** 256 MB free (CLI only). 512 MB recommended for dashboard.
+- **RAM:** 2 GB minimum (CLI). **4 GB recommended** when running the dashboard, MCP servers, skills, and local models together.
 - **Disk:** 50 MB for core install. 200 MB with all build artifacts.
 - **Network:** Optional. Required only for AI provider calls. Fully offline with local Ollama models.
 - **OS:** Windows 10+, macOS 12+, Ubuntu 20.04+ / Debian 11+, Android 10+, any Linux with Node.js 18+.
@@ -105,7 +105,7 @@ No Node.js required. Download the single-file executable:
 
 ```bash
 # Download from GitHub Releases
-# https://github.com/nsk/s-ai/releases/latest
+# https://github.com/karun99/s-ai-update/releases/latest
 
 # Or build from source
 npm run build:exe
@@ -218,8 +218,8 @@ The dashboard is a Progressive Web App. Install it from any modern browser:
 ### 12. Install from Source
 
 ```bash
-git clone https://github.com/nsk/s-ai.git
-cd s-ai
+git clone https://github.com/karun99/s-ai-update.git
+cd s-ai-update
 npm install            # postinstall builds dist/ automatically
 ```
 

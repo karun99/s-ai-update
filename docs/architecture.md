@@ -5,6 +5,7 @@
 | **Doc version** | 1.0 |
 | **Status** | DRAFT — pending owner validation (M0 gate) |
 | **Related** | [srs.md](../srs.md) · [docs/soi-spec.md](soi-spec.md) · [docs/packaging-installers.md](packaging-installers.md) |
+| **UML (Mermaid)** | [docs/uml/](uml/) — [class](uml/class-diagrams.md) · [sequence](uml/sequence-diagrams.md) · [component](uml/component-diagrams.md) |
 
 ## 1. System Layers
 
