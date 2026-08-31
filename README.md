@@ -3,7 +3,7 @@
 [![npm version](https://img.shields.io/npm/v/@saikarun/s-ai?color=6366f1&label=version)](https://www.npmjs.com/package/@saikarun/s-ai)
 [![npm downloads](https://img.shields.io/npm/dm/@saikarun/s-ai?color=22c55e)](https://www.npmjs.com/package/@saikarun/s-ai)
 [![License: MIT](https://img.shields.io/badge/license-MIT-ec4899)](LICENSE)
-[![Node](https://img.shields.io/badge/node-%3E%3D18-2c3e50)](package.json)
+[![Node](https://img.shields.io/badge/node-18%2B-2c3e50)](package.json)
 [![Security Audit](https://github.com/karun99/s-ai-update/actions/workflows/security.yml/badge.svg)](https://github.com/karun99/s-ai-update/actions/workflows/security.yml)
 [![Build](https://github.com/karun99/s-ai-update/actions/workflows/build.yml/badge.svg)](https://github.com/karun99/s-ai-update/actions/workflows/build.yml)
 
@@ -58,18 +58,18 @@ The full OpenWorker harness lives in [`suite/`](suite/) and integrates directly 
 
 | Platform | Architecture | Min RAM | Install Method | Status |
 |----------|-------------|---------|----------------|--------|
-| **Windows** | x64 | 2 GB | [Standalone .exe](#windows-exe) / [MSI Installer](#windows-msi) / npm | ✅ |
+| **Windows** | x64 | 2 GB | [Standalone .exe](#2-windows--standalone-exe) / [MSI Installer](#3-windows--msi-installer) / npm | ✅ |
 | **Windows** | ARM64 | 2 GB | npm / standalone .exe | ✅ |
-| **macOS** | Intel (x64) | 2 GB | [Standalone binary](#macos) / npm | ✅ |
-| **macOS** | Apple Silicon (ARM64) | 2 GB | [Standalone binary](#macos) / npm | ✅ |
-| **Linux** | x64 | 2 GB | [Standalone binary](#linux) / npm / Docker | ✅ |
-| **Linux** | ARM64 | 2 GB | [Standalone binary](#linux-arm64) / npm | ✅ |
+| **macOS** | Intel (x64) | 2 GB | [Standalone binary](#4-macos) / npm | ✅ |
+| **macOS** | Apple Silicon (ARM64) | 2 GB | [Standalone binary](#4-macos) / npm | ✅ |
+| **Linux** | x64 | 2 GB | [Standalone binary](#5-linux) / npm / Docker | ✅ |
+| **Linux** | ARM64 | 2 GB | [Standalone binary](#6-linux-arm64-raspberry-pi-aws-graviton) / npm | ✅ |
 | **Linux** | ARMv7 (RPi 3/4/5) | 2 GB | npm | ✅ |
-| **Android** | ARM64 | 2 GB | [APK](#android) / [Termux](#android-termux) / PWA | ✅ |
-| **Docker** | x64 / ARM64 | 2 GB | [Docker Compose](#docker) | ✅ |
+| **Android** | ARM64 | 2 GB | [APK](#8-android--apk) / [Termux](#9-android--termux) / PWA | ✅ |
+| **Docker** | x64 / ARM64 | 2 GB | [Docker Compose](#7-docker) | ✅ |
 | **Raspberry Pi** | ARM64 / ARMv7 | 2 GB | npm / standalone binary | ✅ |
 | **Chrome OS** | x64 / ARM64 | 2 GB | Linux (Crostini) / PWA | ✅ |
-| **Any browser** | any | — | [PWA (home-screen install)](#pwa) | ✅ |
+| **Any browser** | any | — | [PWA (home-screen install)](#11-pwa-any-browser-any-os) | ✅ |
 
 ### Minimum Requirements
 
@@ -545,7 +545,7 @@ OpenRouter (100+ models), OpenAI, Anthropic, Google AI, Ollama (local), Nvidia, 
 ## Programmatic Usage
 
 ```typescript
-import { Swarm, NeuralMap, ExecutionEngine, listToolMeta, searchArxiv, buildCitationGraph, getBhashiniProvider } from '@saikarun/s-ai';
+import { Swarm, NeuralMap, getNeuralMap, ExecutionEngine, listToolMeta, searchArxiv, buildCitationGraph, getBhashiniProvider } from '@saikarun/s-ai';
 
 // Neural mapping
 const neuralMap = getNeuralMap();
