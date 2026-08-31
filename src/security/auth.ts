@@ -17,7 +17,8 @@ interface StoredAuth {
 }
 
 function getAuthDir(): string {
-  const dir = join(homedir(), '.s-ai', 'auth');
+  const base = process.env.SAI_DATA_DIR ? join(process.env.SAI_DATA_DIR, '.s-ai') : join(homedir(), '.s-ai');
+  const dir = join(base, 'auth');
   if (!existsSync(dir)) mkdirSync(dir, { recursive: true });
   return dir;
 }
@@ -59,11 +60,21 @@ export function generateAuthToken(): string {
 export function createAuthMiddleware(config?: Partial<AuthConfig>) {
   const resolved = config ?? getAuthConfig();
 
-  if (resolved.mode === 'off') {
+  // Configurable auth via environment variables (useful for serverless/CI where the
+  // filesystem token file is ephemeral and a deterministic token is required):
+  //   SAI_AUTH_MODE=off           -> disable bearer auth entirely
+  //   SAI_API_KEY=<token>         -> require exactly this bearer token (deterministic)
+  //   SAI_AUTH_TOKEN=<token>      -> alias for SAI_API_KEY
+  const envMode = process.env.SAI_AUTH_MODE;
+  const envToken = process.env.SAI_API_KEY || process.env.SAI_AUTH_TOKEN;
+
+  if (envMode === 'off') {
     return (_req: Request, _res: Response, next: NextFunction) => next();
   }
 
-  const token = loadOrCreateToken();
+  const token =
+    (envToken && envToken.length >= 1 && envToken) ||
+    loadOrCreateToken();
 
   return (req: Request, res: Response, next: NextFunction) => {
     if (req.path === '/health' || req.path === '/api/status') {
