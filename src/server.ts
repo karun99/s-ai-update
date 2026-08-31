@@ -10,8 +10,17 @@ import { isPrivateUrl, safeFetch } from './security/ssrf.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-export async function createServer(options: { port?: number; root?: string } = {}): Promise<ReturnType<typeof express.application.listen>> {
-  const { port = 3000, root = join(__dirname, '..') } = options;
+export type ServerApp = ReturnType<typeof express>;
+
+export interface CreateServerOptions {
+  port?: number;
+  root?: string;
+  /** When true (default) the server listens; when false the raw Express app is returned (e.g. for serverless). */
+  listen?: boolean;
+}
+
+export async function createServer(options: CreateServerOptions = {}): Promise<ServerApp | ReturnType<typeof express.application.listen>> {
+  const { port = 3000, root = join(__dirname, '..'), listen = true } = options;
   const app = express();
   const publicDir = join(root, 'public');
   const { getDataDir, getGraphDir } = await import('./config.js');
@@ -568,6 +577,10 @@ export async function createServer(options: { port?: number; root?: string } = {
   app.get('*', (req: Request, res: Response) => {
     if (!req.path.startsWith('/api/')) res.sendFile(join(publicDir, 'index.html'));
   });
+
+  if (!listen) {
+    return app;
+  }
 
   return new Promise((resolve) => {
     const server = app.listen(port, () => resolve(server));
