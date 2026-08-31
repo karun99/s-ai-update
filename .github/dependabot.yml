@@ -1,6 +1,26 @@
+#
+# S-AI-update — Adaptive Cyber-Immunity Dependabot Policy
+#
+# Encodes the Adaptive Cyber-Immunity Security Workflow:
+#   Detect -> Analyse -> Validate -> Respond -> Record -> Update -> Learn -> Adapt
+#
+#   Detect      : scheduled scans across every ecosystem & sub-project (no blind spots)
+#   Analyse     : grouped, typed updates so related dependencies move together
+#   Validate    : every change is a distinct, reviewable PR (no silent auto-merge)
+#   Respond     : reviewers/assignees + labels route each PR to the right owner
+#   Record      : prefixed commit messages + labels create a searchable audit trail
+#   Adapt       : weekly cadence keeps the dependency surface continuously refreshed
+#   Governance  : explicit allow/ignore policy + approval gates = least-privilege change
+#
+# Security updates (known vulnerable versions) are raised immediately by GitHub,
+# independent of the schedule below and outside these limits.
+#
 version: 2
+
 updates:
-  # Root project
+  # ==========================================================================
+  # Root npm project (@saikarun/s-ai) — highest change surface
+  # ==========================================================================
   - package-ecosystem: npm
     directory: /
     schedule:
@@ -9,72 +29,116 @@ updates:
       time: "09:00"
       timezone: UTC
     open-pull-requests-limit: 10
+    target-branch: main
     reviewers:
+      - karun99
+    assignees:
       - karun99
     labels:
       - dependencies
+      - security
       - automated
     commit-message:
       prefix: "deps"
       include: scope
+    versioning-strategy: increase-if-necessary
     groups:
-      production:
+      # Analyse/Validate: batch related low-risk updates to keep the build green
+      # and the audit trail legible, while still surfacing each grouping clearly.
+      runtime-security:
+        applies-to: version-updates
+        update-types:
+          - major
+        patterns:
+          - "@modelcontextprotocol/sdk"
+          - "express"
+          - "zod"
+      production-minor-patch:
         dependency-type: production
         update-types:
           - minor
           - patch
-      dev:
+      development-minor-patch:
         dependency-type: development
         update-types:
           - minor
           - patch
     allow:
       - dependency-type: all
+    ignore:
+      # Adapt/Governance: platform / toolchain upgrades change the runtime
+      # contract and are intentionally handled by a human, not Dependabot.
+      - dependency-name: "@types/node"
+        update-types: [ "version-update:semver-major" ]
+      - dependency-name: "typescript"
+        update-types: [ "version-update:semver-major" ]
+      - dependency-name: "eslint"
+        update-types: [ "version-update:semver-major" ]
 
-  # Suite sub-project
+  # ==========================================================================
+  # suite/ sub-project (@saikarun/openworker) — desktop/openworker harness
+  # ==========================================================================
   - package-ecosystem: npm
     directory: /suite
     schedule:
       interval: weekly
       day: monday
-      time: "09:00"
+      time: "09:15"
       timezone: UTC
     open-pull-requests-limit: 10
+    target-branch: main
+    reviewers:
+      - karun99
+    assignees:
+      - karun99
     labels:
       - dependencies
+      - security
+      - openworker
       - automated
     commit-message:
       prefix: "deps(suite)"
       include: scope
     groups:
-      production:
+      production-minor-patch:
         dependency-type: production
-        update-types:
-          - minor
-          - patch
-      dev:
+        update-types: [ "minor", "patch" ]
+      development-minor-patch:
         dependency-type: development
-        update-types:
-          - minor
-          - patch
+        update-types: [ "minor", "patch" ]
 
-  # opencode-research-mode sub-project
+  # ==========================================================================
+  # opencode-research-mode/ sub-project — research tooling plugins
+  # ==========================================================================
   - package-ecosystem: npm
     directory: /opencode-research-mode
     schedule:
       interval: weekly
       day: monday
-      time: "09:00"
+      time: "09:30"
       timezone: UTC
     open-pull-requests-limit: 5
+    target-branch: main
+    reviewers:
+      - karun99
+    assignees:
+      - karun99
     labels:
       - dependencies
+      - security
+      - research
       - automated
     commit-message:
       prefix: "deps(research)"
       include: scope
+    groups:
+      development-minor-patch:
+        dependency-type: development
+        update-types: [ "minor", "patch" ]
 
-  # GitHub Actions
+  # ==========================================================================
+  # GitHub Actions — CI/CD supply-chain surface (Detect: workflow tooling)
+  # ==========================================================================
   - package-ecosystem: github-actions
     directory: /
     schedule:
@@ -83,15 +147,26 @@ updates:
       time: "10:00"
       timezone: UTC
     open-pull-requests-limit: 5
+    target-branch: main
+    reviewers:
+      - karun99
+    assignees:
+      - karun99
     labels:
       - dependencies
       - github-actions
+      - security
       - automated
     commit-message:
       prefix: "ci"
       include: scope
+    groups:
+      actions-minor-patch:
+        update-types: [ "minor", "patch" ]
 
-  # Docker
+  # ==========================================================================
+  # Docker — container base-image & dependency surface
+  # ==========================================================================
   - package-ecosystem: docker
     directory: /
     schedule:
@@ -100,9 +175,15 @@ updates:
       time: "10:00"
       timezone: UTC
     open-pull-requests-limit: 5
+    target-branch: main
+    reviewers:
+      - karun99
+    assignees:
+      - karun99
     labels:
       - dependencies
       - docker
+      - security
       - automated
     commit-message:
       prefix: "docker"
