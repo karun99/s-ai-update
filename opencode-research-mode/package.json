@@ -25,8 +25,8 @@
     "@opencode-ai/plugin": ">=1.17.0"
   },
   "devDependencies": {
-    "@opencode-ai/plugin": "1.17.15",
-    "zod": "4.1.8",
+    "@opencode-ai/plugin": "1.18.25",
+    "zod": "4.4.3",
     "typescript": "5.8.2"
   },
   "license": "MIT"
