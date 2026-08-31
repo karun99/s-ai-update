@@ -1,0 +1,16 @@
+# S-AI — Vercel deploy exclusions
+node_modules/
+.s-ai/
+.you-ai/
+.opencode/
+.paul/
+docs/
+build/
+suite/
+opencode-research-mode/
+test/
+srs.md
+time log.md
+*.log
+.git/
+.vercel/
