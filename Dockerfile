@@ -12,7 +12,7 @@
 # ============================================================================
 
 # ---------- Stage 1: build (compile TypeScript -> dist/) --------------------
-FROM node:22-slim AS build
+FROM node:26-slim AS build
 WORKDIR /app
 
 # Install production deps first (pure-JS, so no build toolchain needed).
@@ -31,7 +31,7 @@ COPY config.default.json ./
 RUN npm run build
 
 # ---------- Stage 2: runtime -------------------------------------------------
-FROM node:22-slim AS runtime
+FROM node:26-slim AS runtime
 WORKDIR /app
 
 ENV NODE_ENV=production \
