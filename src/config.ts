@@ -213,7 +213,11 @@ function getNeuralConfig(): NeuralMapConfig {
 }
 
 function getDataDir(): string {
-  const dir = join(homedir(), '.s-ai', 'data');
+  // Configurable data location. In serverless environments (Vercel/Render/etc.)
+  // the home directory may be read-only or ephemeral, so SAI_DATA_DIR lets hosts
+  // point state at a writable path (e.g. /tmp). Falls back to ~/.s-ai/data.
+  const base = process.env.SAI_DATA_DIR ? join(process.env.SAI_DATA_DIR, '.s-ai', 'data') : join(homedir(), '.s-ai', 'data');
+  const dir = base;
   if (!existsSync(dir)) mkdirSync(dir, { recursive: true });
   return dir;
 }
