@@ -24,7 +24,7 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run build
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: dist
           path: dist/
@@ -64,7 +64,7 @@ jobs:
           name: dist
           path: dist/
       - run: npx pkg@latest . --targets ${{ matrix.target }} --output build/dist/${{ matrix.output }} --compress Brotli
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: exe-${{ matrix.target }}
           path: build/dist/
@@ -88,7 +88,7 @@ jobs:
           $wix = "C:\Program Files (x86)\WiX Toolset v3.14\bin"
           & "$wix\candle.exe" -nologo -out build\dist\s-ai.wixobj build\windows\s-ai-setup.wxs
           & "$wix\light.exe" -nologo -ext WixUIExtension -out build\dist\s-ai-setup.msi build\dist\s-ai.wixobj
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: msi
           path: build/dist/s-ai-setup.msi
@@ -136,7 +136,7 @@ jobs:
           sdk.dir=$ANDROID_SDK_ROOT
           EOF
           gradle --no-daemon assembleDebug 2>/dev/null || echo "Gradle build requires Capacitor init first"
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: android
