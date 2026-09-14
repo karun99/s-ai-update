@@ -52,7 +52,7 @@ function buildZodSchema(params: Record<string, ToolParamDef>): z.ZodObject<Recor
       case 'string': field = z.string(); break;
       case 'number': field = z.number(); break;
       case 'boolean': field = z.boolean(); break;
-      case 'object': field = z.record(z.unknown()); break;
+      case 'object': field = z.record(z.string(), z.unknown()); break;
       case 'array': field = z.array(z.unknown()); break;
       default: field = z.unknown();
     }
