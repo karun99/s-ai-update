@@ -21,6 +21,26 @@ The system fuses **execution layer** (risk-rated tool execution with approval ga
 
 ---
 
+## Statement of need
+
+Autonomous agent systems are demonstrated in demos and then fail in
+production because their security boundary is an afterthought: untrusted
+input can trigger SSRF, tools execute outside the sandbox, and there is no
+formal assessment of deployment readiness. Anyone deploying an autonomous
+assistant needs a security boundary designed in, not patched on, and an
+engineering language for claiming readiness. S-AI v6.1 answers both with
+layered, CI-tested security controls (SSRF protection, filesystem and shell
+sandboxing, bearer-token auth, rate limiting, registry-bound execution) and
+with TRL/MRL/IRL readiness indicators computed from reproducible checks.
+
+## AI usage disclosure
+
+Code and documentation were drafted with generative-AI assistance and reviewed
+by the human maintainer, who made the design decisions. This disclosure is
+kept in line with the JOSS AI usage policy.
+
+---
+
 ## The Artificial Mind & Integrated OpenWorker
 
 S-AI is built as an **Artificial Mind** — a cohesive intelligence that combines many cognitive faculties rather than a single chat wrapper. It ships as an **Integrated OpenWorker**: a self-hosted "AI coworker" that installs natively and works for you on your own hardware.

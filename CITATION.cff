@@ -1,0 +1,19 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+title: "S-AI v6.1"
+abstract: "Security-hardened Synthetic Executive for policy-gated multi-agent autonomy with SSRF protection, sandboxing, bearer-token auth, rate limiting, and TRL/MRL/IRL readiness evidence computed from CI."
+authors:
+  - family-names: Nandipati
+    given-names: Sai Karun
+    orcid: https://orcid.org/0009-0007-9218-9750
+    affiliation: "Department of Data Science and Artificial Intelligence, PB Siddhartha College of Arts and Science"
+keywords:
+  - multi-agent systems
+  - execution safety
+  - synthetic executive
+  - TRL
+  - agentic AI
+license: MIT
+date-released: "2026-09-25"
+version: "6.1.0"
+repository-code: "https://github.com/karun99/s-ai-update"
