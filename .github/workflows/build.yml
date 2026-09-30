@@ -58,7 +58,7 @@ jobs:
         with:
           node-version: 22
           cache: npm
-      - run: npm ci --omit=dev
+      - run: npm ci
       - uses: actions/download-artifact@v4
         with:
           name: dist
@@ -116,7 +116,7 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: "8.10"
-      - run: npm ci --omit=dev
+      - run: npm ci
       - uses: actions/download-artifact@v4
         with:
           name: dist
