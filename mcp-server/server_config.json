@@ -1,0 +1,184 @@
+{
+  "app": {
+    "name": "@saikarun/s-ai",
+    "version": "6.1.0",
+    "description": "Multi-agent swarm intelligence with neural mapping, research mapper (Paperscape-style arXiv visualization), Bhashini multilingual AI, crawl4ai, MCP, and bias-reduced consensus. 20+ AI providers."
+  },
+  "stack": "node",
+  "routes": [
+    {
+      "method": "get",
+      "path": "/api/token"
+    },
+    {
+      "method": "post",
+      "path": "/api/swarm/query"
+    },
+    {
+      "method": "get",
+      "path": "/api/swarm/status"
+    },
+    {
+      "method": "post",
+      "path": "/api/swarm/reset"
+    },
+    {
+      "method": "post",
+      "path": "/api/crawl"
+    },
+    {
+      "method": "get",
+      "path": "/api/graph"
+    },
+    {
+      "method": "post",
+      "path": "/api/graph/query"
+    },
+    {
+      "method": "get",
+      "path": "/api/graph/stats"
+    },
+    {
+      "method": "get",
+      "path": "/api/persona"
+    },
+    {
+      "method": "post",
+      "path": "/api/persona"
+    },
+    {
+      "method": "delete",
+      "path": "/api/persona"
+    },
+    {
+      "method": "post",
+      "path": "/api/persona/context-node"
+    },
+    {
+      "method": "get",
+      "path": "/api/persona/profiles"
+    },
+    {
+      "method": "get",
+      "path": "/api/providers"
+    },
+    {
+      "method": "post",
+      "path": "/api/providers/test"
+    },
+    {
+      "method": "post",
+      "path": "/api/ai-engine/build"
+    },
+    {
+      "method": "get",
+      "path": "/api/ai-engine/list"
+    },
+    {
+      "method": "get",
+      "path": "/api/ai-engine/:id"
+    },
+    {
+      "method": "get",
+      "path": "/api/mcp-builder/templates"
+    },
+    {
+      "method": "post",
+      "path": "/api/mcp-builder/build"
+    },
+    {
+      "method": "get",
+      "path": "/api/skill-creator/templates"
+    },
+    {
+      "method": "post",
+      "path": "/api/skill-creator/build"
+    },
+    {
+      "method": "get",
+      "path": "/research-mapper"
+    },
+    {
+      "method": "get",
+      "path": "/api/research/search"
+    },
+    {
+      "method": "get",
+      "path": "/api/research/graph"
+    },
+    {
+      "method": "post",
+      "path": "/api/bhashini/translate"
+    },
+    {
+      "method": "post",
+      "path": "/api/bhashini/tts"
+    },
+    {
+      "method": "post",
+      "path": "/api/bhashini/asr"
+    },
+    {
+      "method": "get",
+      "path": "/ai-engine"
+    },
+    {
+      "method": "get",
+      "path": "/api/config"
+    },
+    {
+      "method": "post",
+      "path": "/api/ai/call"
+    },
+    {
+      "method": "get",
+      "path": "/api/status"
+    },
+    {
+      "method": "post",
+      "path": "/api/chat"
+    },
+    {
+      "method": "get",
+      "path": "/api/history"
+    },
+    {
+      "method": "post",
+      "path": "/api/knowledge"
+    },
+    {
+      "method": "get",
+      "path": "/api/skills"
+    },
+    {
+      "method": "get",
+      "path": "/health"
+    }
+  ],
+  "pages": [],
+  "base_url": "http://localhost:3000",
+  "module": null,
+  "scripts": {
+    "build": "node node_modules/typescript/bin/tsc",
+    "build:exe": "bash build/scripts/build-exe.sh",
+    "build:msi": "bash build/scripts/build-msi.sh",
+    "build:apk": "bash build/scripts/build-apk.sh",
+    "build:docker": "bash build/scripts/build-docker.sh",
+    "build:all": "bash build/scripts/build-all.sh",
+    "start": "node bin/you-ai.js serve",
+    "dev": "node --watch bin/you-ai.js serve",
+    "mcp": "node bin/mcp-stdio.js",
+    "lint": "eslint \"bin/**/*.js\"",
+    "lint:fix": "eslint \"bin/**/*.js\" --fix",
+    "test": "node --test dist/test/**/*.test.js",
+    "test:coverage": "node --test --experimental-test-coverage dist/test/**/*.test.js",
+    "validate": "node node_modules/typescript/bin/tsc --noEmit && echo '\u2713 TypeScript valid'",
+    "pretest": "npm run build && npm run validate",
+    "prepare": "node -e \"require('fs').existsSync('dist/src/index.js') || require('child_process').execSync('npm run build', { stdio: 'inherit' })\"",
+    "prepack": "node -e \"require('fs').existsSync('dist/src/index.js') || (console.error('Missing dist/ \u2014 run build first'), process.exit(1))\"",
+    "postinstall": "node -e \"const fs=require('fs'); if (!fs.existsSync('dist/src/index.js')) { console.log('  Building S-AI from source...'); require('child_process').execSync('npm run build', { stdio: 'inherit' }); } console.log('  S-AI v6.1.0 installed. Run: s-ai setup')\""
+  },
+  "server": "mcp-server/server.mjs",
+  "runner": "node",
+  "runner_cmd": "node"
+}
