@@ -107,12 +107,12 @@
     "mcp": "node bin/mcp-stdio.js",
     "lint": "eslint \"bin/**/*.js\"",
     "lint:fix": "eslint \"bin/**/*.js\" --fix",
-    "test": "node --test dist/test/**/*.test.js",
-    "test:coverage": "node --test --experimental-test-coverage dist/test/**/*.test.js",
-    "validate": "node node_modules/typescript/bin/tsc --noEmit && echo '✓ TypeScript valid'",
+    "test": "tsc -p tsconfig.test.json && node --test \"dist-test/test/**/*.test.js\"",
+    "test:coverage": "tsc -p tsconfig.test.json && node --test --experimental-test-coverage \"dist-test/test/**/*.test.js\"",
+    "validate": "node node_modules/typescript/bin/tsc --noEmit && echo '\u2713 TypeScript valid'",
     "pretest": "npm run build && npm run validate",
     "prepare": "node -e \"require('fs').existsSync('dist/src/index.js') || require('child_process').execSync('npm run build', { stdio: 'inherit' })\"",
-    "prepack": "node -e \"require('fs').existsSync('dist/src/index.js') || (console.error('Missing dist/ — run build first'), process.exit(1))\"",
+    "prepack": "node -e \"require('fs').existsSync('dist/src/index.js') || (console.error('Missing dist/ \u2014 run build first'), process.exit(1))\"",
     "postinstall": "node -e \"const fs=require('fs'); if (!fs.existsSync('dist/src/index.js')) { console.log('  Building S-AI from source...'); require('child_process').execSync('npm run build', { stdio: 'inherit' }); } console.log('  S-AI v6.1.0 installed. Run: s-ai setup')\""
   },
   "engines": {
