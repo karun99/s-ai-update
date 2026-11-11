@@ -6,3 +6,4 @@ dist/
 .opencode/
 .paul/
 build/dist/
+dist-test/
